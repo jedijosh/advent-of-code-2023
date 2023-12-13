@@ -10,7 +10,7 @@ async function solvePartOne () {
     for (const gameInstance of lines) {
         let gameWasPossible = true
         let gameData = gameInstance.split(':')
-        let gameNumber = gameData[0].match(/\d/)
+        let gameNumber = gameData[0].match(/\d+/)
         let turns = gameData[1].split(';')
         for (const turn of turns) {
             if (!gameWasPossible) continue
@@ -26,7 +26,7 @@ async function solvePartOne () {
             }
             if (!await isTurnPossible(numberOfRed, numberOfGreen, numberOfBlue)) {
                 gameWasPossible = false
-                console.log('game was not possible')
+                console.log(`${gameNumber} was not possible`)
             }
         }
         if (gameWasPossible) sumOfPossibleGames += Number(gameNumber)
@@ -37,7 +37,7 @@ async function solvePartOne () {
 async function isTurnPossible (numberOfRed, numberOfGreen, numberOfBlue) {
     const MAX_RED_CUBES = 12
     const MAX_GREEN_CUBES = 13
-    const MAX_BLUE_CUBES = 12
+    const MAX_BLUE_CUBES = 14
     return ( numberOfRed <= MAX_RED_CUBES && numberOfGreen <= MAX_GREEN_CUBES && numberOfBlue <= MAX_BLUE_CUBES )
 }
 
