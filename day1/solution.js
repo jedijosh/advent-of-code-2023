@@ -62,4 +62,4 @@ async function replaceTextWithNumbers ( inputString ) {
 //         console.log(result)
 //     })
 
-module.exports = {replaceTextWithNumbers, solvePartOne, solvePartTwo }
+module.exports = { replaceTextWithNumbers, solvePartOne, solvePartTwo }

@@ -1,7 +1,7 @@
 const fs = require('node:fs/promises')
 
-async function solvePartOne () {
-    let file = await fs.open('./input.txt')
+async function solvePartOne ( filename) {
+    let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
     let lines = fileInput.trim().split('\n')
 
@@ -34,8 +34,8 @@ async function solvePartOne () {
     return sumOfPossibleGames
 }
 
-async function solvePartTwo () {
-    let file = await fs.open('./input.txt')
+async function solvePartTwo ( filename ) {
+    let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
     let lines = fileInput.trim().split('\n')
 
@@ -75,10 +75,10 @@ async function isTurnPossible (numberOfRed, numberOfGreen, numberOfBlue) {
     return ( numberOfRed <= MAX_RED_CUBES && numberOfGreen <= MAX_GREEN_CUBES && numberOfBlue <= MAX_BLUE_CUBES )
 }
 
-solvePartOne()
+solvePartOne('./input.txt')
     .then(sumOfPossibleGames => console.log('sumOfPossibleGames:', sumOfPossibleGames))
 
-solvePartTwo()
+solvePartTwo('./input.txt')
     .then(sumOfGames => console.log('sumOfGames:', sumOfGames))
 
 module.exports = { solvePartOne, solvePartTwo }
