@@ -34,6 +34,40 @@ async function solvePartOne () {
     return sumOfPossibleGames
 }
 
+async function solvePartTwo () {
+    let file = await fs.open('./input.txt')
+    let fileInput = await file.readFile({ encoding: 'utf8'})
+    let lines = fileInput.trim().split('\n')
+
+    let sumOfGames = 0
+
+    for (const gameInstance of lines) {
+        let gameData = gameInstance.split(':')
+        let turns = gameData[1].split(';')
+        let maxNumberOfRed = 0
+        let maxNumberOfGreen = 0
+        let maxNumberOfBlue = 0
+        for (const turn of turns) {
+            let numberOfRed = 0
+            let numberOfGreen = 0
+            let numberOfBlue = 0
+            let cubePulls = turn.split(",")
+            for (const pull of cubePulls) {
+                let numberOfCubes = Number(pull.match(/\d+/))
+                if (pull.search(/red/) !== -1) numberOfRed = numberOfCubes
+                if (pull.search(/green/) !== -1) numberOfGreen = numberOfCubes
+                if (pull.search(/blue/) !== -1) numberOfBlue = numberOfCubes
+            }
+            if (numberOfRed > maxNumberOfRed) maxNumberOfRed = numberOfRed
+            if (numberOfGreen > maxNumberOfGreen) maxNumberOfGreen = numberOfGreen
+            if (numberOfBlue > maxNumberOfBlue) maxNumberOfBlue = numberOfBlue
+        }
+        
+        sumOfGames += (maxNumberOfRed * maxNumberOfGreen * maxNumberOfBlue)
+    }
+    return sumOfGames
+}
+
 async function isTurnPossible (numberOfRed, numberOfGreen, numberOfBlue) {
     const MAX_RED_CUBES = 12
     const MAX_GREEN_CUBES = 13
@@ -44,4 +78,7 @@ async function isTurnPossible (numberOfRed, numberOfGreen, numberOfBlue) {
 solvePartOne()
     .then(sumOfPossibleGames => console.log('sumOfPossibleGames:', sumOfPossibleGames))
 
-module.exports = { solvePartOne }
+solvePartTwo()
+    .then(sumOfGames => console.log('sumOfGames:', sumOfGames))
+
+module.exports = { solvePartOne, solvePartTwo }
