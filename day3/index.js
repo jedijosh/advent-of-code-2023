@@ -142,6 +142,4 @@ solvePartTwo('./input.txt')
 // solvePartTwo('./tests/data/input.txt')
     .then(answer => console.log('Answer:', answer))
 
-    // ANSWER IS NOT 27579688 (TOO LOW)
-
 module.exports = { solvePartOne, solvePartTwo }

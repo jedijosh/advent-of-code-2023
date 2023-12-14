@@ -23,34 +23,42 @@ async function solvePartTwo (filename) {
     let lines = fileInput.trim().split('\n')
     let sum = 0
     lines.forEach(line => { 
-        console.log('original line:', line)
         line = replaceTextWithNumbers(line)
         let numbers = line.match(/\d{1}/g)
-        console.log(numbers)
         let firstNumber = numbers[0]
         let lastNumber = numbers[numbers.length-1]
-        console.log(`firstNumber: ${firstNumber}, lastNumber: ${lastNumber}`)
         sum += Number(`${firstNumber}${lastNumber}`)
-        console.log(`adding ${firstNumber}${lastNumber} results in a new sum of ${sum}`)
-        console.log('')
     })
     return sum
 }
 
 function replaceTextWithNumbers ( inputString ) {
+    const NUMBER_TEXT_OR_DIGIT_REGEX = /(zero|one|two|three|four|five|six|seven|eight|nine|\d)/gi
     const numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-    let modifiedString = inputString.replace(NUMBER_TEXT_REGEX, (match) => {
-        return numbers.indexOf(match)
-    })
-
-    console.log('modifiedString:', modifiedString)
+    
+    let modifiedString = ''
+    let searchString = inputString
+    while (searchString.length > 0) {
+        let results = NUMBER_TEXT_OR_DIGIT_REGEX.exec(searchString) 
+        if (!results) break
+        let translatedNumber = numbers.indexOf(results[0])
+        if ( translatedNumber === -1 ) {
+            modifiedString += results
+        } else {
+            modifiedString += translatedNumber
+        }
+        NUMBER_TEXT_OR_DIGIT_REGEX.lastIndex = results.index + 1
+    }
     return modifiedString
 
 }
 
+// solvePartTwo('./tests/data/sampleInputPartTwo.txt')
 solvePartTwo('./input.txt')
     .then(result => {
         console.log('result:', result)
     })
+
+    // NOT 55330
 
 module.exports = { replaceTextWithNumbers, solvePartOne, solvePartTwo }
