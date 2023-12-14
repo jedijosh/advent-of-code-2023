@@ -31,6 +31,8 @@ async function solvePartTwo (filename) {
 
     let totalNumberOfCards = 0
 
+    let arrayOfNumberOfMatches = []
+
     for (let lineNumber = 0; lineNumber < gameCards.length; lineNumber++) {
         totalNumberOfCards++
         let numberOfMatches = 0
@@ -40,8 +42,13 @@ async function solvePartTwo (filename) {
         let winningNumbers = secondTempArray[0].match(/\d+/g)
         let cardNumbers = secondTempArray[1].match(/\d+/g)
 
-        for (let cardNumber of cardNumbers) {
-            if (winningNumbers.indexOf(cardNumber) !== -1) numberOfMatches++
+        if (arrayOfNumberOfMatches[cardGameNumber-1]) {
+            numberOfMatches = arrayOfNumberOfMatches[cardGameNumber-1]
+        } else {
+            for (let cardNumber of cardNumbers) {
+                if (winningNumbers.indexOf(cardNumber) !== -1) numberOfMatches++
+            }
+            arrayOfNumberOfMatches.push(numberOfMatches)
         }
         for (let i = 0; i < numberOfMatches; i++) {
             gameCards.push(gameCards[Number(cardGameNumber) + Number(i)])
