@@ -10,14 +10,11 @@ async function solvePartOne ( filename) {
 
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++ ) {
         if (lines[lineNumber].trim() === '' || lineNumber === (lines.length - 1)) {
-            console.log('looking for reflections')
             let numberOfRowsAboveReflection = await findHorizontalReflection(pattern)
-            if (numberOfRowsAboveReflection !== 0 ) console.log(`reflection found at row ${numberOfRowsAboveReflection}`)
+            // if (numberOfRowsAboveReflection !== 0 ) console.log(`reflection found at row ${numberOfRowsAboveReflection}`)
             let columnsAsRows = await transposeColumnsToRows(pattern)
-            console.log('columnsAsRows:', columnsAsRows)
             let numberOfColumnsLeftOfTheReflection = await findHorizontalReflection(columnsAsRows)
-            console.log('number:', numberOfColumnsLeftOfTheReflection)
-            if (numberOfColumnsLeftOfTheReflection !== 0 ) console.log(`reflection found at column ${numberOfColumnsLeftOfTheReflection}`)
+            // if (numberOfColumnsLeftOfTheReflection !== 0 ) console.log(`reflection found at column ${numberOfColumnsLeftOfTheReflection}`)
             pattern = []
             finalNumber = finalNumber + (numberOfRowsAboveReflection * 100) + numberOfColumnsLeftOfTheReflection
         } else {
@@ -37,30 +34,92 @@ async function findHorizontalReflection ( patternArray) {
         previousRow = patternArray[rowNumber - 1]
         currentRow = patternArray[rowNumber]
         if ( previousRow === currentRow ) {
-            console.log(`tentative reflection at ${rowNumber}`)
             // Check the remainder of the rows to determine if this is a reflection
             let isReflection = true
             let numberOfRowsToCheck = Math.min(rowNumber - 1, patternArray.length - rowNumber - 1)
-            // console.log(`need to check ${numberOfRowsToCheck} rows`)
             for (let rowsToCheckForReflection = 1; rowsToCheckForReflection <= numberOfRowsToCheck; rowsToCheckForReflection++) {
                 let firstRow = patternArray[rowNumber - 1 - rowsToCheckForReflection]
                 let secondRow = patternArray[rowNumber + rowsToCheckForReflection]
                 if ( firstRow !== secondRow ) {
                     isReflection = false
-                    console.log('not a reflection')
                     break
                 }
             }
             if (isReflection) {
                 reflectionLocation = rowNumber
-                console.log('reflection found')
                 break
             }
         }
     }
     return reflectionLocation
 }
-    
+
+async function solvePartTwo ( filename) {
+    let file = await fs.open(filename)
+    let fileInput = await file.readFile({ encoding: 'utf8'})
+    let lines = fileInput.trim().split('\n')
+
+    let finalNumber = 0
+    let pattern = []
+
+    for (let lineNumber = 0; lineNumber < lines.length; lineNumber++ ) {
+        if (lines[lineNumber].trim() === '' || lineNumber === (lines.length - 1)) {
+            let numberOfRowsAboveReflection = await findHorizontalReflectionWithSmudge(pattern)
+            // if (numberOfRowsAboveReflection !== 0 ) console.log(`reflection found at row ${numberOfRowsAboveReflection}`)
+            let columnsAsRows = await transposeColumnsToRows(pattern)
+            let numberOfColumnsLeftOfTheReflection = await findHorizontalReflectionWithSmudge(columnsAsRows)
+            // if (numberOfColumnsLeftOfTheReflection !== 0 ) console.log(`reflection found at column ${numberOfColumnsLeftOfTheReflection}`)
+            pattern = []
+            finalNumber = finalNumber + (numberOfRowsAboveReflection * 100) + numberOfColumnsLeftOfTheReflection
+        } else {
+            pattern.push(lines[lineNumber])
+        }
+    }
+    return finalNumber
+}
+
+// If returns 0, no reflection was found.
+async function findHorizontalReflectionWithSmudge ( patternArray) {
+    let reflectionLocation = 0
+    let previousRow
+    let currentRow
+    // Start searching at the second row (index 1) so there are 2 rows to compare
+    for (let rowNumber = 1; rowNumber < patternArray.length; rowNumber++) {
+        previousRow = patternArray[rowNumber - 1]
+        currentRow = patternArray[rowNumber]
+        let numberOfChangesRemaining = 1 // Allow one change on either the current line or one of the later comparison lines
+        let differenceCount = await numberOfDifferences(previousRow, currentRow)
+        numberOfChangesRemaining -= differenceCount
+        if ( numberOfChangesRemaining >= 0 ) {
+            // Check the remainder of the rows to determine if this is a reflection
+            let isReflection = true
+            let numberOfRowsToCheck = Math.min(rowNumber - 1, patternArray.length - rowNumber - 1)
+            for (let rowsToCheckForReflection = 1; rowsToCheckForReflection <= numberOfRowsToCheck; rowsToCheckForReflection++) {
+                let firstRow = patternArray[rowNumber - 1 - rowsToCheckForReflection]
+                let secondRow = patternArray[rowNumber + rowsToCheckForReflection]
+                numberOfChangesRemaining -= await numberOfDifferences(firstRow, secondRow)
+                if ( numberOfChangesRemaining < 0 ) {
+                    isReflection = false
+                    break
+                }
+            }
+            if (isReflection && numberOfChangesRemaining === 0 ) {
+                reflectionLocation = rowNumber
+                break
+            }
+        }
+    }
+    return reflectionLocation
+}
+ 
+async function numberOfDifferences ( firstString, secondString) {
+    let numberOfDifferences = 0
+    for (let characterNumber = 0; characterNumber < firstString.length; characterNumber++) {
+        if (firstString[characterNumber] !== secondString[characterNumber]) numberOfDifferences++
+    }
+    return numberOfDifferences
+}
+
 async function transposeColumnsToRows ( patternArray) {
     let columns = []
     for (let columnNumber = 0; columnNumber < patternArray[0].length - 1; columnNumber++) {
@@ -72,8 +131,10 @@ async function transposeColumnsToRows ( patternArray) {
     return columns
 }
 
-solvePartOne('./input.txt')
+// solvePartOne('./input.txt')
+//     .then(finalNumber => console.log('finalNumber:', finalNumber))
+
+solvePartTwo('./input.txt')
     .then(finalNumber => console.log('finalNumber:', finalNumber))
 
-
-module.exports = { solvePartOne }
+module.exports = { solvePartOne, solvePartTwo, numberOfDifferences }
