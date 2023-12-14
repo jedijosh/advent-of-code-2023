@@ -1,4 +1,5 @@
 const fs = require('node:fs/promises')
+const { showCompletionScript } = require('yargs')
 
 async function solvePartOne (filename) {
     let file = await fs.open(filename)
@@ -85,67 +86,47 @@ async function solvePartTwo (filename) {
         currentLine = lines[lineNumber]
         nextLine = lineNumber < (lines.length - 1) ? lines[lineNumber + 1] : null
         const asterisksInCurrentLine = currentLine.matchAll(/\*/g)
-        const numbersInCurrentLine = currentLine.matchAll(/\d/g)
-        const numbersInPreviousLine = previousLine ? previousLine.matchAll(/\d/g) : null
-        const numbersInNextLine = nextLine ? nextLine.matchAll(/\d/g) : null
+        // Iterating using "for" appears to remove entries from the list.  Traversing over a 2nd time finds an empty array.
         for (asterisk of asterisksInCurrentLine) {
-            console.log('asterisk', asterisk)
-            console.log('numbers in previous line', numbersInPreviousLine)
-            console.log('numbers in current line', numbersInCurrentLine)
-            console.log('numbers in next line', numbersInNextLine)
-
-            let numberOfAdjacentNumbers = 0
-            let firstDigitPosition = asterisk.index
-            let lastDigitPosition = asterisk.index + asterisk[0].length - 1
-
-            // Current line: If there is a character to the left of the number, check it against the RegEx
-            if (firstDigitPosition > 0) {
-                let characterToLeft = currentLine[firstDigitPosition-1].trim()
-                if (characterToLeft.match(/\d/)) {
-                    numberOfAdjacentNumbers++
-                    console.log('character to the left is a digit')
+            let adjacentNumbers = []
+            let asteriskLocation = asterisk.index
+            const numbersInCurrentLine = currentLine.matchAll(/\d+/g)
+            const numbersInPreviousLine = previousLine ? previousLine.matchAll(/\d+/g) : null
+            const numbersInNextLine = nextLine ? nextLine.matchAll(/\d+/g) : null
+            for (number of numbersInCurrentLine) {
+                let startIndexOfNumber = number.index
+                let endIndexOfNumber = number.index + number[0].length - 1
+                if ( endIndexOfNumber === (asteriskLocation - 1) || startIndexOfNumber === (asteriskLocation + 1))
+                {
+                    adjacentNumbers.push(number[0])
                 }
             }
-            // Current line: If there is a character to the right of the number, check it against the RegEx
-            if (lastDigitPosition < (currentLine.length - 1)) {
-                let characterToRight = currentLine[lastDigitPosition + 1].trim()
-                if (characterToRight.match(/\d/)) {
-                    numberOfAdjacentNumbers++
-                    console.log('character to the right is a digit')
+            for (number of numbersInPreviousLine) {
+                let startIndexOfNumber = number.index
+                let endIndexOfNumber = number.index + number[0].length - 1
+                if ( 
+                    (startIndexOfNumber >= (asteriskLocation - 1) && startIndexOfNumber <= (asteriskLocation + 1)) ||
+                    (endIndexOfNumber >= (asteriskLocation - 1) && endIndexOfNumber <= (asteriskLocation + 1))) {
+                        adjacentNumbers.push(number[0])
+                }
+                
+            }
+            for (number of numbersInNextLine) {
+                let startIndexOfNumber = number.index
+                let endIndexOfNumber = number.index + number[0].length - 1
+                if ( 
+                    (startIndexOfNumber >= (asteriskLocation - 1) && startIndexOfNumber <= (asteriskLocation + 1)) ||
+                    (endIndexOfNumber >= (asteriskLocation - 1) && endIndexOfNumber <= (asteriskLocation + 1))) {
+                        adjacentNumbers.push(number[0])
                 }
             }
-            
-            // if (previousLine && !isAdjacentToASymbol) {
-            //     let substringStart = Math.max(firstDigitPosition - 1, 0)
-            //     let substringEnd = Math.min(lastDigitPosition + 1, currentLine.length)
-            //     let stringToCheck = previousLine.substring(substringStart, substringEnd + 1)
-            //     let cleansedString = await removeDigitsAndPeriods(stringToCheck)
-            //     if (cleansedString.trim().length > 0) {
-            //         isAdjacentToASymbol = true
-            //     }
-            // }
-
-            // if (nextLine && !isAdjacentToASymbol) {
-            //     let substringStart = Math.max(firstDigitPosition - 1, 0)
-            //     let substringEnd = Math.min(lastDigitPosition + 1, nextLine.length)
-            //     let stringToCheck = nextLine.substring(substringStart, substringEnd + 1)
-            //     let cleansedString = await removeDigitsAndPeriods(stringToCheck)
-            //     if (cleansedString.trim().length > 0) {
-            //         isAdjacentToASymbol = true
-            //     }
-            // }
-            // if (isAdjacentToASymbol) {
-            //     // console.log(`adding ${number[0]} from line number ${lineNumber} to sum`)
-            //     totalSum += Number(number[0])
-            // }
-        }
-
-
-
-
-
         
+            if ( adjacentNumbers.length === 2 ) {
+                totalSum += (Number(adjacentNumbers[0] * Number(adjacentNumbers[1])))
+            }
+        }
     }
+    return totalSum
 }
 
 async function removeDigitsAndPeriods (inputString) {
@@ -157,7 +138,10 @@ async function removeDigitsAndPeriods (inputString) {
 // solvePartOne('./input.txt')
 //     .then(answer => console.log('Answer:', answer))
 
-solvePartTwo('./tests/data/input.txt')
+solvePartTwo('./input.txt')
+// solvePartTwo('./tests/data/input.txt')
     .then(answer => console.log('Answer:', answer))
+
+    // ANSWER IS NOT 27579688 (TOO LOW)
 
 module.exports = { solvePartOne, solvePartTwo }
