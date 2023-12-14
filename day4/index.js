@@ -4,9 +4,9 @@ async function solvePartOne (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
     let lines = fileInput.trim().split('\n')
+    file.close()
     
     let totalSum = 0
-
 
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
         let numberOfMatches = 0
@@ -26,20 +26,36 @@ async function solvePartOne (filename) {
 async function solvePartTwo (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
-    let lines = fileInput.trim().split('\n')
+    let gameCards = fileInput.trim().split('\n')
+    file.close()
 
-    let totalSum = 0
+    let totalNumberOfCards = 0
 
+    for (let lineNumber = 0; lineNumber < gameCards.length; lineNumber++) {
+        totalNumberOfCards++
+        let numberOfMatches = 0
+        let tempArray = gameCards[lineNumber].split(':')
+        let cardGameNumber = tempArray[0].match(/\d+/g)[0]
+        let secondTempArray = tempArray[1].split('|')
+        let winningNumbers = secondTempArray[0].match(/\d+/g)
+        let cardNumbers = secondTempArray[1].match(/\d+/g)
 
-    return totalSum
+        for (let cardNumber of cardNumbers) {
+            if (winningNumbers.indexOf(cardNumber) !== -1) numberOfMatches++
+        }
+        for (let i = 0; i < numberOfMatches; i++) {
+            gameCards.push(gameCards[Number(cardGameNumber) + Number(i)])
+        }
+    }
+    return totalNumberOfCards
 }
 
 
-solvePartOne('./input.txt')
-    .then(answer => console.log('Answer:', answer))
-
-// solvePartTwo('./input.txt')
-// // solvePartTwo('./tests/data/input.txt')
+// solvePartOne('./input.txt')
 //     .then(answer => console.log('Answer:', answer))
+
+solvePartTwo('./input.txt')
+// solvePartTwo('./tests/data/input.txt')
+    .then(answer => console.log('Answer:', answer))
 
 module.exports = { solvePartOne, solvePartTwo }
