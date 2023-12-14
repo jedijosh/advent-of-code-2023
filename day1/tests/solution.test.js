@@ -49,7 +49,7 @@ test('part one solution matches', async () => {
 })
 
 test('part two solution matches with sample data', async () => {
-    expect(await solution.solvePartTwo('./testInput.txt')).toBe(281);
+    expect(await solution.solvePartTwo('./tests/data/input.txt')).toBe(281);
 })
 
 test('part two solution matches with actual data', async () => {

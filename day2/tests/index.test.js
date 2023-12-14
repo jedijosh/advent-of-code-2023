@@ -1,7 +1,7 @@
 const index = require('../index.js')
 
 test('result should be 8 with sample data', async () => {
-    let partOneAnswer = await index.solvePartOne('./testInput.txt')
+    let partOneAnswer = await index.solvePartOne('./tests/data/input.txt')
     expect(partOneAnswer).toBe(8)
 })
 
