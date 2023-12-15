@@ -37,40 +37,40 @@ async function solvePartOne ( filename) {
         // console.log(JSON.stringify(cardsInHand, null, 2))
         // cardCount.count is in descending order
 
-        
+        console.log(JSON.stringify(cardsInHand[handNumber].cardCount))
         if (await isFiveOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[6].push(cardsInHand[handNumber])
-            // console.log('5 of a kind')
+            console.log('5 of a kind')
             continue
         }
 
         if (await isFourOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[5].push(cardsInHand[handNumber])
-            // console.log('4 of a kind')
+            console.log('4 of a kind')
             continue
         }
         if (await isFullHouse(cardsInHand[handNumber].cardCount)) {
             handRanks[4].push(cardsInHand[handNumber])
-            // console.log('full house')
+            console.log('full house')
             continue
         }
         if (await isThreeOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[3].push(cardsInHand[handNumber])
-            // console.log('3 of a kind')
+            console.log('3 of a kind')
             continue
         }
         if (await isTwoPair(cardsInHand[handNumber].cardCount)) {
             handRanks[2].push(cardsInHand[handNumber])
-            // console.log('Two pair')
+            console.log('Two pair')
             continue
         }
         if (await isOnePair(cardsInHand[handNumber].cardCount)) {
             handRanks[1].push(cardsInHand[handNumber])
-            // console.log('One pair')
+            console.log('One pair')
             continue
         }
         handRanks[0].push(cardsInHand[handNumber])
-        // console.log('High card')
+        console.log('High card')
 
     }
 
@@ -80,10 +80,10 @@ async function solvePartOne ( filename) {
         if (handRanks[i].length > 1) handRanks[i].sort(sortByStrongestCard)
     }
 
-    console.log(handRanks)
+    // console.log(handRanks)
 
     let handRank = lines.length
-    for (let i = handRanks.length - 1; i > 0 ; i--) {
+    for (let i = handRanks.length - 1; i >= 0 ; i--) {
         for (let j = 0; j < handRanks[i].length; j++) {
             totalWinnings += handRanks[i][j].wager * handRank
             handRank--
@@ -137,7 +137,7 @@ async function solvePartTwo ( filename ) {
 }
 
 solvePartOne('./input.txt')
-// solvePartOne('./tests/data/input.txt')
+ //solvePartOne('./tests/data/input2.txt')
     .then(answer => console.log('answer:', answer))
 
     // not 233699292 - too low
@@ -148,4 +148,4 @@ solvePartOne('./input.txt')
 
 
 
-module.exports = { solvePartOne, solvePartTwo } 
+module.exports = { solvePartOne, solvePartTwo, isFiveOfAKind, isFourOfAKind, isFullHouse, isThreeOfAKind, isTwoPair, isOnePair } 
