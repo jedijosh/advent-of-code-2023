@@ -89,6 +89,4 @@ solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day15/input.txt')
 //  solvePartTwo('./input.txt')
     .then(answer => console.log('answer:', answer))
 
-    // NOT 246704 - too low
-
 module.exports = { solvePartOne, solvePartTwo }
