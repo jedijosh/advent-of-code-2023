@@ -1,0 +1,16 @@
+const index = require('../index.js')
+
+test('result should be 1320 with sample data', async () => {
+    let partOneAnswer = await index.solvePartOne('./tests/data/input.txt')
+    expect(partOneAnswer).toBe(1320)
+})
+
+test('result should be 521341 with my data', async () => {
+    let partOneAnswer = await index.solvePartOne('./input.txt')
+    expect(partOneAnswer).toBe(521341)
+})
+
+// test('part 2 result should be 63307 with my data', async () => {
+//     let partTwoAnswer = await index.solvePartTwo('./input.txt')
+//     expect(partTwoAnswer).toBe(63307)
+// })
