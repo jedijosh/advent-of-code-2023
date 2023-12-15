@@ -9,13 +9,9 @@ async function solvePartOne ( filename) {
 
     let cardsInHand = []
     let handRanks = new Array(7)
-    handRanks[0] = []
-    handRanks[1] = []
-    handRanks[2] = []
-    handRanks[3] = []
-    handRanks[4] = []
-    handRanks[5] = []
-    handRanks[6] = []
+    for (let i = 0; i < 7; i++) {
+        handRanks[i] = []
+    }
 
     let totalWinnings = 0
 
@@ -37,40 +33,40 @@ async function solvePartOne ( filename) {
         // console.log(JSON.stringify(cardsInHand, null, 2))
         // cardCount.count is in descending order
 
-        console.log(JSON.stringify(cardsInHand[handNumber].cardCount))
+        // console.log(JSON.stringify(cardsInHand[handNumber].cardCount))
         if (await isFiveOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[6].push(cardsInHand[handNumber])
-            console.log('5 of a kind')
+            // console.log('5 of a kind')
             continue
         }
 
         if (await isFourOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[5].push(cardsInHand[handNumber])
-            console.log('4 of a kind')
+            // console.log('4 of a kind')
             continue
         }
         if (await isFullHouse(cardsInHand[handNumber].cardCount)) {
             handRanks[4].push(cardsInHand[handNumber])
-            console.log('full house')
+            // console.log('full house')
             continue
         }
         if (await isThreeOfAKind(cardsInHand[handNumber].cardCount)) {
             handRanks[3].push(cardsInHand[handNumber])
-            console.log('3 of a kind')
+            // console.log('3 of a kind')
             continue
         }
         if (await isTwoPair(cardsInHand[handNumber].cardCount)) {
             handRanks[2].push(cardsInHand[handNumber])
-            console.log('Two pair')
+            // console.log('Two pair')
             continue
         }
         if (await isOnePair(cardsInHand[handNumber].cardCount)) {
             handRanks[1].push(cardsInHand[handNumber])
-            console.log('One pair')
+            // console.log('One pair')
             continue
         }
         handRanks[0].push(cardsInHand[handNumber])
-        console.log('High card')
+        // console.log('High card')
 
     }
 
@@ -104,12 +100,29 @@ function sortByStrongestCard (a, b) {
     return difference
 }
 
-async function isFiveOfAKind ( hand ) {
-    return hand[0].count === 5
+async function isFiveOfAKind ( hand, numberOfJokers ) {
+    let matches = hand[0].count === 5
+    if (numberOfJokers > 0 && !matches) {
+        if (hand[0].label === 'J') {
+            matches = (hand[1].count + numberOfJokers) === 5
+        } else {
+            matches = (hand[0].count + numberOfJokers) === 5
+        }
+    }
+    return matches
 }
 
-async function isFourOfAKind ( hand ) {
-    return hand[0].count === 4
+async function isFourOfAKind ( hand, numberOfJokers ) {
+    let matches = hand[0].count === 4
+    if (numberOfJokers > 0 && !matches) {
+        if (hand[0].label === 'J') {
+            matches = (hand[1].count + numberOfJokers) === 4
+        } else (
+            matches = (hand[0].count + numberOfJokers) === 4 
+        )
+    }
+    return matches
+    
 }
 
 async function isFullHouse ( hand ) {
