@@ -265,9 +265,7 @@ async function solvePartTwo ( filename ) {
 
 // solvePartOne('./input.txt')
  //solvePartOne('./tests/data/input2.txt')
-    // .then(answer => console.log('answer:', answer))
-
-    // not 233699292 - too low
+    // .then(answer => console.log('answer:', answer))s
 
 solvePartTwo('./input.txt')
 // solvePartTwo('./tests/data/input.txt')
