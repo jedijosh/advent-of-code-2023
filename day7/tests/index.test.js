@@ -25,10 +25,10 @@ test('part 2 result should be 6839 with sample data set 2', async () => {
     expect(answer).toBe(6839)
 })
 
-// test('part 2 result should be 34788142 with my data', async () => {
-//     let answer = await index.solvePartTwo('./input.txt')
-//     expect(answer).toBe(34788142)
-// })
+test('part 2 result should be 244848487 with my data', async () => {
+    let answer = await index.solvePartTwo('./input.txt')
+    expect(answer).toBe(244848487)
+})
 
 describe('five of a kind', () => {
     test('part 2 - five of a kind with 4 cards and 1 joker', async () => {
