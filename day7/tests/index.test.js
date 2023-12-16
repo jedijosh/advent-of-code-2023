@@ -15,6 +15,21 @@ test('part 1 result should be 246409899 with my data', async () => {
     expect(answer).toBe(246409899)
 })
 
+test('part 2 result should be 5905 with sample data', async () => {
+    let answer = await index.solvePartTwo('./tests/data/input.txt')
+    expect(answer).toBe(5905)
+})
+
+test('part 2 result should be 6839 with sample data set 2', async () => {
+    let answer = await index.solvePartTwo('./tests/data/input2.txt')
+    expect(answer).toBe(6839)
+})
+
+// test('part 2 result should be 34788142 with my data', async () => {
+//     let answer = await index.solvePartTwo('./input.txt')
+//     expect(answer).toBe(34788142)
+// })
+
 describe('five of a kind', () => {
     test('part 2 - five of a kind with 4 cards and 1 joker', async () => {
         let answer = await index.isFiveOfAKind([{"label":"Q","count":4},{"label":"J","count":1}], 1)
@@ -61,17 +76,3 @@ describe('four of a kind', () => {
         expect(answer).toBe(true)
     })
 })
-// test('part 2 result should be 71503 with sample data', async () => {
-//     let answer = await index.solvePartTwo('./tests/data/input.txt')
-//     expect(answer).toBe(71503)
-// })
-
-// test('part 2 result should be 6839 with sample data set 2', async () => {
-//     let answer = await index.solvePartTwo('./tests/data/input2.txt')
-//     expect(answer).toBe(6839)
-// })
-
-// test('part 2 result should be 34788142 with my data', async () => {
-//     let answer = await index.solvePartTwo('./input.txt')
-//     expect(answer).toBe(34788142)
-// })
