@@ -37,7 +37,7 @@ test('part 2 result should be 6 with sample data', async () => {
 //     expect(answer).toBe(6839)
 // })
 
-// test('part 2 result should be 244848487 with my data', async () => {
-//     let answer = await index.solvePartTwo('./input.txt')
-//     expect(answer).toBe(244848487)
-// })
+test('part 2 result should be 19185263738117 with my data', async () => {
+    let answer = await index.solvePartTwo('./input.txt')
+    expect(answer).toBe(19185263738117)
+})

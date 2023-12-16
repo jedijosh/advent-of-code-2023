@@ -42,6 +42,8 @@ async function solvePartTwo ( filename ) {
     let instructions = lines[0]
     instructions = instructions.replace(/L/g, '0').replace(/R/g, '1')
     let numberOfSteps = 0
+
+    // console.log('instructions:', instructions)
     
     let networkMap = new Map()
     let currentLocations = []
@@ -52,7 +54,7 @@ async function solvePartTwo ( filename ) {
         
     }
     
-    // console.log(currentLocations)
+    // console.log('currentLocations:', currentLocations)
     let locationEndInZArray = new Array(currentLocations.length)
     let endInZFrequencyArray = new Array(currentLocations.length)
     for (let i = 0; i < locationEndInZArray.length; i++) {
@@ -64,10 +66,13 @@ async function solvePartTwo ( filename ) {
     let atLeastTwoZLocationsLogged = false
     while (!allLocationsEndInZ && !atLeastTwoZLocationsLogged) {
         numberOfSteps++
-        if (numberOfSteps % 100000 === 0 ) console.log(`on step number ${numberOfSteps}`)
-        // console.log(`at ${currentLocation}, currentInstruction: ${currentInstruction}`)
+        if (numberOfSteps % 100000 === 0 ) {
+            // console.log(`on step number ${numberOfSteps}`)
+            // console.log(locationEndInZArray)
+        }
+
         for (location = 0; location < currentLocations.length; location++) {
-            // console.log(`at ${currentLocations[location]}, currentInstruction: ${currentInstruction}`)
+            // console.log(`at ${currentLocations[location]}, currentInstruction: ${instructions[currentInstruction]}`)
             currentLocations[location] = networkMap.get(currentLocations[location])[instructions[currentInstruction]]
             // console.log(`new location: ${currentLocations[location]}`)
             // console.log(currentLocations)
@@ -78,14 +83,14 @@ async function solvePartTwo ( filename ) {
             }
         }
         
-        currentInstruction = (currentInstruction + 1) % (instructions.length - 1)
+        currentInstruction = (currentInstruction + 1) % (instructions.length)
         allLocationsEndInZ = await doAllLocationsEndInZ(currentLocations)
         atLeastTwoZLocationsLogged = locationEndInZArray.every(array => array.length >= 3)
     }
 
     if (allLocationsEndInZ) return numberOfSteps
 
-//     console.log(locationEndInZArray)
+    // console.log(locationEndInZArray)
 
     for (let i = 0; i < locationEndInZArray.length; i++) {
         let frequency = Number(locationEndInZArray[i][1]) - Number(locationEndInZArray[i][0])
@@ -100,21 +105,22 @@ async function solvePartTwo ( filename ) {
     // console.log(endInZFrequencyArray)
 
     let stepsNeededForAllToEndInZ = 0
-    for (let i = 100000; i < locationEndInZArray[0].length; i++) {
-        let valueInAllArrays = true
-        if (i % 1000 === 0 ) console.log(`checking the ${i} value of ${locationEndInZArray[0][i]}`)
-        // Check each of the other arrays for matching numbers
-        for (let arrayNumber = 1; arrayNumber < locationEndInZArray.length; arrayNumber++) {
-            if (locationEndInZArray[arrayNumber].findIndex(value => value === locationEndInZArray[0][i]) === -1) {
-                valueInAllArrays = false
-                break
-            }
-        }
-        if (valueInAllArrays) {
-            stepsNeededForAllToEndInZ = locationEndInZArray[0][i]
-            break
-        }
-    }
+    stepsNeededForAllToEndInZ = await findLowestCommonMultiple(endInZFrequencyArray)
+    // for (let i = 100000; i < locationEndInZArray[0].length; i++) {
+    //     let valueInAllArrays = true
+    //     if (i % 1000 === 0 ) console.log(`checking the ${i} value of ${locationEndInZArray[0][i]}`)
+    //     // Check each of the other arrays for matching numbers
+    //     for (let arrayNumber = 1; arrayNumber < locationEndInZArray.length; arrayNumber++) {
+    //         if (locationEndInZArray[arrayNumber].findIndex(value => value === locationEndInZArray[0][i]) === -1) {
+    //             valueInAllArrays = false
+    //             break
+    //         }
+    //     }
+    //     if (valueInAllArrays) {
+    //         stepsNeededForAllToEndInZ = locationEndInZArray[0][i]
+    //         break
+    //     }
+    // }
     
     // calculate out the next x number of steps it will take each to end in Z.  Compare for matches
 
@@ -123,6 +129,34 @@ async function solvePartTwo ( filename ) {
     return stepsNeededForAllToEndInZ
 
     // return Number(endInZFrequencyArray[0]) * Number(endInZFrequencyArray[1]) * endInZFrequencyArray[2] * endInZFrequencyArray[3] * endInZFrequencyArray[4] * endInZFrequencyArray[5] * endInZFrequencyArray[6]
+}
+
+// async function findLowestCommonMultiple ( arrayOfNumbers ) {
+//     let lowestCommonMultiple = arrayOfNumbers[0]
+//     for (let i = 1; i < arrayOfNumbers.length; i++) {
+//         lowestCommonMultiple = lowestCommonMultiple * arrayOfNumbers[i]
+//     }
+//     return lowestCommonMultiple
+// }
+
+async function findLowestCommonMultiple ( arrayOfNumbers ) {
+    arrayOfNumbers.sort((a,b) => b - a)
+    let allNumbersDivisible = false
+    let multiple = 1
+    let largestNumber = arrayOfNumbers[0]
+    let largestNumberIteration
+    while (!allNumbersDivisible) {
+        // console.log(`on multiple ${multiple}`)
+        if (multiple % 1000000 === 0 ) console.log(`on multiple ${multiple}`)
+        largestNumberIteration = largestNumber * multiple
+        multiple++
+        allNumbersDivisible = true
+        for (let i = 1; i < arrayOfNumbers . length; i++) {
+            allNumbersDivisible = (largestNumberIteration % arrayOfNumbers[i] === 0) ? true : false
+            if (!allNumbersDivisible) break
+        }
+    }   
+    return largestNumberIteration
 }
 
 async function doAllLocationsEndInZ ( locationArray ) {
