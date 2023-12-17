@@ -5,10 +5,10 @@ test('result should be 46 with sample data', async () => {
     expect(partOneAnswer).toBe(46)
 })
 
-// test('result should be 521341 with my data', async () => {
-//     let partOneAnswer = await index.solvePartOne('./input.txt')
-//     expect(partOneAnswer).toBe(521341)
-// })
+test('result should be 7543 with my data', async () => {
+    let partOneAnswer = await index.solvePartOne('./input.txt')
+    expect(partOneAnswer).toBe(7543)
+})
 
 // test('part 2 result should be 145 with my data', async () => {
 //     let partTwoAnswer = await index.solvePartTwo('./tests/data/input.txt')
