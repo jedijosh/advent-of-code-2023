@@ -6,7 +6,6 @@ async function solvePartOne ( filename) {
     file.close()
 
     let lines = fileInput.trim().split('\n')
-    // console.log('lines:', lines)
 
     let currentLightLocations = [ { x: 0, y: -1, direction: 'R' }]
     let energizedMap = []
@@ -20,15 +19,9 @@ async function solvePartOne ( filename) {
             energizedMap[y].push( { energized: false, energizedDirections: [] })
         }
     }
-    // energizedMap[0][0].energized = true
-    // energizedMap[0][0].energizedDirections.push('R')
     
-    // for (let y = 0; y < lines.length; y++) {
-    //     energizedMap.push(stringRepresentingLine)
-    // }
     // console.log('energizedMap:')
     // console.log(energizedMap)
-    // await print2DArray(energizedMap)
     while (currentLightLocations.length > 0 ) {
         for (let lightNumber = 0; lightNumber < currentLightLocations.length; lightNumber++) {
             // console.log('energizedMap:')
@@ -158,70 +151,92 @@ async function solvePartTwo ( filename ) {
     file.close()
 
     let lines = fileInput.trim().split('\n')
-    // console.log('lines:', lines)
+    let maxiumumNumberEnergized = 0    
 
-    let currentLightLocations = [ { x: 0, y: -1, direction: 'R' }]
-    let energizedMap = []
-    let boardWidth = lines[0].length - 1
-    let boardHeight = lines.length - 1
-    let numberOfNodesEnergized = 0
-
-    for (let y = 0; y < lines.length; y++) {
-        energizedMap[y] = []
-        for (let charPosition = 0; charPosition < lines[0].length; charPosition++) {
-            energizedMap[y].push( { energized: false, energizedDirections: [] })
-        }
+    let startingLightLocations = []
+    // go across the top and bottom with directions down and up (respectively)
+    for (let i = 0; i < lines[0].length; i++) {
+        startingLightLocations.push({ x: -1, y: i, direction: 'D' })
+        startingLightLocations.push({ x: lines.length, y: i, direction: 'U' })
     }
-    // energizedMap[0][0].energized = true
-    // energizedMap[0][0].energizedDirections.push('R')
-    
-    // for (let y = 0; y < lines.length; y++) {
-    //     energizedMap.push(stringRepresentingLine)
-    // }
-    // console.log('energizedMap:')
-    // console.log(energizedMap)
-    // await print2DArray(energizedMap)
-    while (currentLightLocations.length > 0 ) {
-        for (let lightNumber = 0; lightNumber < currentLightLocations.length; lightNumber++) {
-            // console.log('energizedMap:')
-            // console.log(energizedMap)
 
-            switch (currentLightLocations[lightNumber].direction) {
-                case 'R':
-                    currentLightLocations[lightNumber].y++
-                    break
-                case 'L':
-                    currentLightLocations[lightNumber].y--
-                    break
-                case 'U':
-                    currentLightLocations[lightNumber].x--
-                    break
-                case 'D':
-                    currentLightLocations[lightNumber].x++
-                    break
+    for (let i = 0; i < lines.length; i++) {
+        startingLightLocations.push({ x: i, y: -1, direction: 'R' })
+        startingLightLocations.push({ x: i, y: lines[0].length, direction: 'L' })
+    }
+    
+    for (let startingConfiguration = 0; startingConfiguration < startingLightLocations.length; startingConfiguration++) {
+        // let currentLightLocations = [ { x: 0, y: -1, direction: 'R' }]
+        
+        console.log(`running configuration #${startingConfiguration} of ${startingLightLocations.length-1}`)
+        let currentLightLocations = []
+        currentLightLocations.push(startingLightLocations[startingConfiguration])
+        let energizedMap = []
+        let boardWidth = lines[0].length - 1
+        let boardHeight = lines.length - 1
+        let numberOfNodesEnergized = 0
+
+        for (let y = 0; y < lines.length; y++) {
+            energizedMap[y] = []
+            for (let charPosition = 0; charPosition < lines[0].length; charPosition++) {
+                energizedMap[y].push( { energized: false, energizedDirections: [] })
             }
-            let newXPosition = currentLightLocations[lightNumber].x
-            let newYPosition = currentLightLocations[lightNumber].y
-            // console.log(`new positions are ${newXPosition}, ${newYPosition}`)
-            // Check if location is still on the map
-            if (newXPosition === -1 || newXPosition > boardWidth || newYPosition === -1 || newYPosition > boardHeight) {
-                // Don't need to trace the light further as it is now off the board.
-                // console.log(`removing light as new positions are ${newXPosition}, ${newYPosition}`)
-                currentLightLocations.splice([lightNumber], 1)
-                // Move the light position back one so we don't skip a spot
-                lightNumber--
-            } else {
-                // New location is still on the map
-                // Check if location is already energized
-                if (energizedMap[newXPosition][newYPosition].energized) {
-                    // If the node was already energized from this direction, no need to trace further
-                    
-                    if (energizedMap[newXPosition][newYPosition].energizedDirections.findIndex(element => element === currentLightLocations[lightNumber].direction) !== -1) {
-                        // console.log(`already energized from direction ${currentLightLocations[lightNumber].direction}, stopping trace`)
-                        currentLightLocations.splice([lightNumber], 1)
-                        // Move the light position back one so we don't skip a spot
-                        lightNumber--
+        }
+        
+        // console.log('energizedMap:')
+        // console.log(energizedMap)
+        while (currentLightLocations.length > 0 ) {
+            for (let lightNumber = 0; lightNumber < currentLightLocations.length; lightNumber++) {
+                // console.log('energizedMap:')
+                // console.log(energizedMap)
+
+                switch (currentLightLocations[lightNumber].direction) {
+                    case 'R':
+                        currentLightLocations[lightNumber].y++
+                        break
+                    case 'L':
+                        currentLightLocations[lightNumber].y--
+                        break
+                    case 'U':
+                        currentLightLocations[lightNumber].x--
+                        break
+                    case 'D':
+                        currentLightLocations[lightNumber].x++
+                        break
+                }
+                let newXPosition = currentLightLocations[lightNumber].x
+                let newYPosition = currentLightLocations[lightNumber].y
+                // console.log(`new positions are ${newXPosition}, ${newYPosition}`)
+                // Check if location is still on the map
+                if (newXPosition === -1 || newXPosition > boardWidth || newYPosition === -1 || newYPosition > boardHeight) {
+                    // Don't need to trace the light further as it is now off the board.
+                    // console.log(`removing light as new positions are ${newXPosition}, ${newYPosition}`)
+                    currentLightLocations.splice([lightNumber], 1)
+                    // Move the light position back one so we don't skip a spot
+                    lightNumber--
+                } else {
+                    // New location is still on the map
+                    // Check if location is already energized
+                    if (energizedMap[newXPosition][newYPosition].energized) {
+                        // If the node was already energized from this direction, no need to trace further
+                        
+                        if (energizedMap[newXPosition][newYPosition].energizedDirections.findIndex(element => element === currentLightLocations[lightNumber].direction) !== -1) {
+                            // console.log(`already energized from direction ${currentLightLocations[lightNumber].direction}, stopping trace`)
+                            currentLightLocations.splice([lightNumber], 1)
+                            // Move the light position back one so we don't skip a spot
+                            lightNumber--
+                        } else {
+                            energizedMap[newXPosition][newYPosition].energizedDirections.push(currentLightLocations[lightNumber].direction)
+                            let newDirections = await findNextDirectionsToTravel(lines, currentLightLocations[lightNumber].direction, newXPosition, newYPosition)
+                            currentLightLocations[lightNumber].direction = newDirections[0]
+                            if (newDirections.length === 2) {
+                                currentLightLocations.push({ x: newXPosition, y: newYPosition, direction: newDirections[1] })
+                            }
+                        }
                     } else {
+                        // Energize the location and log the direction the node was energized from
+                        energizedMap[newXPosition][newYPosition].energized = true
+                        numberOfNodesEnergized++
                         energizedMap[newXPosition][newYPosition].energizedDirections.push(currentLightLocations[lightNumber].direction)
                         let newDirections = await findNextDirectionsToTravel(lines, currentLightLocations[lightNumber].direction, newXPosition, newYPosition)
                         currentLightLocations[lightNumber].direction = newDirections[0]
@@ -229,39 +244,24 @@ async function solvePartTwo ( filename ) {
                             currentLightLocations.push({ x: newXPosition, y: newYPosition, direction: newDirections[1] })
                         }
                     }
-                } else {
-                    // Energize the location and log the direction the node was energized from
-                    energizedMap[newXPosition][newYPosition].energized = true
-                    numberOfNodesEnergized++
-                    energizedMap[newXPosition][newYPosition].energizedDirections.push(currentLightLocations[lightNumber].direction)
-                    let newDirections = await findNextDirectionsToTravel(lines, currentLightLocations[lightNumber].direction, newXPosition, newYPosition)
-                    currentLightLocations[lightNumber].direction = newDirections[0]
-                    if (newDirections.length === 2) {
-                        currentLightLocations.push({ x: newXPosition, y: newYPosition, direction: newDirections[1] })
-                    }
                 }
-            }
-        }  
-    }   
-    
-    return numberOfNodesEnergized  
+            }  
+        }   
+        
+        if (numberOfNodesEnergized > maxiumumNumberEnergized) {
+            maxiumumNumberEnergized = numberOfNodesEnergized
+        }
+        
+    }
+    return maxiumumNumberEnergized
 }
 
-// async function print2DArray ( array ) {
-//     for (let row of array) {
-//         console.log(row)
-//     }
-//     return
-// }
-
 // solvePartOne('./tests/data/input.txt')
-solvePartOne('./input.txt')
-    .then(answer => console.log('answer:', answer))
-    // NOT 195 - too low
+// solvePartOne('./input.txt')
+//     .then(answer => console.log('answer:', answer))
 
-//solvePartTwo('./tests/data/input.txt')
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day16/input.txt')
-//  solvePartTwo('./input.txt')
-    // .then(answer => console.log('answer:', answer))
+// solvePartTwo('./tests/data/input.txt')
+ solvePartTwo('./input.txt')
+    .then(answer => console.log('answer:', answer))
 
 module.exports = { solvePartOne, solvePartTwo }
