@@ -256,30 +256,29 @@ export async function solvePartOne ( filename : string) {
 
 async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, currentLocations: Array<LavaPoint>) {
     // Need to know the grid and current location
-
-
-
     let directions: Array<String>
-    ['U', 'D', 'L', 'R'].forEach(async value => {
-        if (value !== currentLocation.direction) {
+    ['U', 'D', 'L', 'R'].forEach(async direction => {
+        // Add all directions except for what the current search's direction
+        if (direction !== currentLocation.direction) {
             try {
-                let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
-                let incomingVector : String = '1' + value
+                let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, direction)
+                let incomingVector : String = '1' + direction
                 let hasPreviouslyBeenVisitedFromThisVector: boolean = await pointToAdd.hasBeenVisitedFromVector(incomingVector)
                 if (hasPreviouslyBeenVisitedFromThisVector) {
                     let currentLowestValue = await pointToAdd.getLowestIncomingValueForIncomingVector(incomingVector)
                     if (currentLocation.heatLoss < currentLowestValue) {
                         // Has been visited from this vector previously.  Only add if the current heat loss is less than the lowest prior value.
+                            console.log(`Not adding ${pointToAdd.row}, ${pointToAdd.column} as ${currentLocation.heatLoss} already exceeds ${currentLowestValue}`)
                         pointToAdd.updateIncomingVector(currentLocation.direction, currentLocation.heatLoss)
-                        currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, pointToAdd.value, value, currentLocation.heatLoss))
+                        currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, pointToAdd.value, direction, currentLocation.heatLoss))
                     }
                 } else {
                     // Hasn't previously been visited from this vector.
-                    currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, pointToAdd.value, value, currentLocation.heatLoss))
+                    currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, pointToAdd.value, direction, currentLocation.heatLoss))
                 }
                 
             } catch (error) {
-                console.log(`(2) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${value}`)
+                console.log(`(2) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${direction}`)
             }
         }
     })
