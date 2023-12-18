@@ -18,7 +18,7 @@ export async function solvePartOne ( filename : string) {
             super(row, column, value)
             this.heatLoss = heatLoss
             this.direction = direction
-            this.numberOfMovesInThisDirection = 0
+            this.numberOfMovesInThisDirection = 0   
         }
     }
     
@@ -49,8 +49,8 @@ export async function solvePartOne ( filename : string) {
                 currentLocations.splice(locationNumber, 1)
                 locationNumber--
             }
-            if (await currentLocation.getHasBeenVisited()) {
-                console.log('already visited, pruning search')
+            if (await currentLocation.getHasBeenVisited() && await currentLocation.getLowestIncomingValue() < currentLocation.heatLoss) {
+                console.log('already visited with a lower heat loss, pruning search')
                 currentLocations.splice(locationNumber, 1)
                 locationNumber--
             }
@@ -69,6 +69,7 @@ export async function solvePartOne ( filename : string) {
                         locationNumber--
                     }
                     await newPoint.setHasBeenVisited(true)
+                    if (await newPoint.getLowestIncomingValue() < currentLocation.heatLoss) await newPoint.setLowestIncomingValue(currentLocation.heatLoss)
                     // Try to add the other directions to the stack
                     let directions: Array<String>
                     ['U', 'D', 'L', 'R'].forEach(async value => {
