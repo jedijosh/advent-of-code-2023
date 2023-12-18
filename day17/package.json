@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
-  "dependencies": {
-    
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.4",

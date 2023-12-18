@@ -1,7 +1,6 @@
 import { parseFileIntoArrayOfLines } from './utils'
 import { Grid } from './classes/Grid'
 import { Point } from './classes/Point'
-import { isCallOrNewExpression } from 'typescript'
 
 class LavaPoint extends Point {
     heatLoss: number
@@ -26,7 +25,7 @@ export async function solvePartOne ( filename : string) {
     let currentLocations: Array<LavaPoint> = new Array()
     currentLocations.push(new LavaPoint(0, 0, '0', 'R', 0))
     currentLocations.push(new LavaPoint(0, 0, '0', 'D', 0))
-    currentLocations[0].heatLoss = currentLocations[0].heatLoss + Number('3')
+    // currentLocations[0].heatLoss = currentLocations[0].heatLoss + Number('3')
     // console.log(currentLocations)
     let goalRowLocation: number = grid.numberOfRows - 1
     let goalColumnLocation: number = grid.numberOfColumns - 1
@@ -44,7 +43,6 @@ export async function solvePartOne ( filename : string) {
             console.log(`searching ${locationNumber} of ${currentLocations.length}`)
             // Get the current location's data
             let currentLocation: LavaPoint = currentLocations[locationNumber]
-            currentLocation.heatLoss = Number(currentLocation.heatLoss) + Number(await currentLocation.getValue())
             console.log(`at ${currentLocation.row}, ${currentLocation.column} going direction ${currentLocation.direction}, current heat loss is ${currentLocation.heatLoss}`)
             if (currentLocation.row === goalRowLocation && currentLocation.column === goalColumnLocation) {
                 // Reached goal
@@ -70,19 +68,15 @@ export async function solvePartOne ( filename : string) {
                     // Can still move in same direction as haven't moved 3 times in this direction yet
                     // Find the new location details
                     currentLocation.numberOfMovesInThisDirection++
-                    currentLocation.row = await newPoint.getRow()
-                    currentLocation.column = await newPoint.getColumn()
+                    currentLocation.heatLoss = Number(currentLocation.heatLoss) + Number(await newPoint.getValue())
+                    let newRow = await newPoint.getRow()
+                    let newColumn = await newPoint.getColumn()
                     let incomingVector : String = currentLocation.numberOfMovesInThisDirection.toString() + currentLocation.direction
-                    console.log(`next location to search is ${currentLocation.row}, ${currentLocation.column} with vector ${incomingVector}`)
+                    console.log(`next location to search is ${newRow}, ${newColumn} with vector ${incomingVector}`)
                     
                     // If has already been visited from the same incoming vector 
                     // but the current heat loss is less than the heat loss when it was visited, keep this alive
-                    
                     let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
-                    
-                    // let newPointIncomingVectors = await newPoint.getIncomingVectors()
-                    // console.log(newPointIncomingVectors)
-                    // let priorTripAlongThisVector = newPointIncomingVectors.find((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === incomingVector)
                     if (priorTripAlongThisVector) {
                         // Returns the incomingVector object
                         if (await newPoint.getLowestIncomingValueForIncomingVector(incomingVector) > (currentLocation.heatLoss + Number(await newPoint.getValue))) {
@@ -118,11 +112,12 @@ export async function solvePartOne ( filename : string) {
                                     }
                                 }
                             })
+
+                            currentLocation.row = newRow
+                            currentLocation.column = newColumn
                         } else {
-                        // if (await newPoint.getHasBeenVisited()) {
-                                currentLocations.splice(locationNumber, 1)
-                                locationNumber--
-                        //}
+                            currentLocations.splice(locationNumber, 1)
+                            locationNumber--
                         }
                     } else {
                         // Has not been visited from this incomingVector.  Log incoming vector for future trips
@@ -285,7 +280,7 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
 
 }
 
-solvePartOne('./tests/data/input.txt')
+solvePartOne('./tests/data/input2.txt')
     .then(answer => console.log('answer:', answer))
 
     // should be 102 with test input
