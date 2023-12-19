@@ -58,6 +58,7 @@ export class Grid {
         }
         if (newRowNumber < 0 || newRowNumber >= this.numberOfRows) throw new Error('Invalid row number')
         if (newColumnNumber < 0 || newColumnNumber >= this.numberOfColumns) throw new Error('Invalid column number')
+        console.log(`new row/column ${newRowNumber}, ${newColumnNumber}`)
         return this.gridPoints[newRowNumber][newColumnNumber]
     }
 
