@@ -1,11 +1,11 @@
-import { IncomingMessage } from "http"
+const MAX_VALUE: number = 999999999999
 
 export class Point {
     row: number
     column: number
     value: String
     hasBeenVisited: boolean = false
-    lowestIncomingValue: number = 999999999999
+    lowestIncomingValue: number = MAX_VALUE
     // Incoming vectors would store the prior directions (for example, 2 left moves) and the lowest incoming value related to that movement
     // This allows us to see if the next tentative move would be more efficient than what has already been done
     // Vectors have a magnitude and direction
@@ -58,20 +58,30 @@ export class Point {
     }
 
     public async getLowestIncomingValueForIncomingVector(incomingVector: String) {
-        let indexToUpdate: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === incomingVector)
-        if (indexToUpdate !== -1) {
-            return this.incomingVectors[indexToUpdate].lowestIncomingValue
+        let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
+            return vector.incomingDirection === incomingVector
+            // If an existing vector has the same direction, lower magnitude, and lower or equal value, return that value?
+            // return vector.incomingDirection.substring(1,2) === incomingVector.substring(1,2) && Number(vector.incomingDirection.substring(0,1)) <= Number(incomingVector.substring(0,1))
+        })
+        // console.log('index to retrieve', indexToRetrieve)
+        if (indexToRetrieve !== -1) {
+            return this.incomingVectors[indexToRetrieve].lowestIncomingValue
         } else {
-            return 999999999999
+            return MAX_VALUE
         }
     }
 
     public async updateIncomingVector(incomingDirection: String, newLowestIncomingValue: number) {
         let indexToUpdate: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === incomingDirection)
-        if (indexToUpdate !== -1) this.incomingVectors[indexToUpdate].lowestIncomingValue = newLowestIncomingValue
+        if (indexToUpdate !== -1) {
+            this.incomingVectors[indexToUpdate].lowestIncomingValue = newLowestIncomingValue
+        }
     }
 
     public async hasBeenVisitedFromVector(incomingVector: String) {
         return (this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === incomingVector) !== -1)
+        // return (this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
+        //     return vector.incomingDirection.substring(1,2) === incomingVector.substring(1,2) && Number(vector.incomingDirection.substring(0,1)) <= Number(incomingVector.substring(0,1))
+        // }) !== -1)
     }
 }
