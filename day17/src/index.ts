@@ -83,35 +83,36 @@ export async function solvePartOne ( filename : string) {
                             newPoint.updateIncomingVector(incomingVector, currentLocation.heatLoss)
                             
                             // Try to add the other directions to the stack
-                            let directions: Array<String>
-                            ['U', 'D', 'L', 'R'].forEach(async value => {
-                                if (value !== currentLocation.direction) {
-                                    try {
-                                        let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
-                                        let newPointIncomingVectors = await pointToAdd.getIncomingVectors()
-                                        // console.log(newPointIncomingVectors)
-                                        let incomingVector : String = '1' + currentLocation.direction
-                                        let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
-                                        // 
-                                        // let priorTripAlongThisVector = newPointIncomingVectors.find((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === '1' + value)
-                                        if (priorTripAlongThisVector) {
-                                            // Returns the incomingVector object
-                                            //if (currentLocation.heatLoss < priorTripAlongThisVector.lowestIncomingValue) {
-                                            if (await pointToAdd.getLowestIncomingValueForIncomingVector(incomingVector) > (currentLocation.heatLoss + Number(pointToAdd.getValue))) {
-                                                // Has been visited from this vector previously.  Only add if the heat loss when we get there is less than the lowest prior value.
-                                                newPoint.updateIncomingVector(incomingVector, currentLocation.heatLoss + Number(pointToAdd.getValue()))
-                                                currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
-                                            }
-                                        } else {
-                                            // Haven't visited this location before
-                                            currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
-                                        }
-                                        // keep updating here
-                                    } catch (error) {
-                                        console.log(`(1) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${value}`)
-                                    }
-                                }
-                            })
+                            await addEligibleNeighbors(grid, currentLocation, currentLocations)
+                            // let directions: Array<String>
+                            // ['U', 'D', 'L', 'R'].forEach(async value => {
+                            //     if (value !== currentLocation.direction) {
+                            //         try {
+                            //             let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
+                            //             let newPointIncomingVectors = await pointToAdd.getIncomingVectors()
+                            //             // console.log(newPointIncomingVectors)
+                            //             let incomingVector : String = '1' + currentLocation.direction
+                            //             let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
+                            //             // 
+                            //             // let priorTripAlongThisVector = newPointIncomingVectors.find((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === '1' + value)
+                            //             if (priorTripAlongThisVector) {
+                            //                 // Returns the incomingVector object
+                            //                 //if (currentLocation.heatLoss < priorTripAlongThisVector.lowestIncomingValue) {
+                            //                 if (await pointToAdd.getLowestIncomingValueForIncomingVector(incomingVector) > (currentLocation.heatLoss + Number(pointToAdd.getValue))) {
+                            //                     // Has been visited from this vector previously.  Only add if the heat loss when we get there is less than the lowest prior value.
+                            //                     newPoint.updateIncomingVector(incomingVector, currentLocation.heatLoss + Number(pointToAdd.getValue()))
+                            //                     currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
+                            //                 }
+                            //             } else {
+                            //                 // Haven't visited this location before
+                            //                 currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
+                            //             }
+                            //             // keep updating here
+                            //         } catch (error) {
+                            //             console.log(`(1) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${value}`)
+                            //         }
+                            //     }
+                            // })
 
                             currentLocation.row = newRow
                             currentLocation.column = newColumn
@@ -123,40 +124,41 @@ export async function solvePartOne ( filename : string) {
                         // Has not been visited from this incomingVector.  Log incoming vector for future trips
                         console.log(`next location to search ${currentLocation.row}, ${currentLocation.column} going direction ${currentLocation.direction} has not been seached from ${incomingVector}`)
                         newPoint.addNewIncomingVector({incomingDirection: incomingVector, lowestIncomingValue: (currentLocation.heatLoss + Number(newPoint.getValue()))})
-
-                        let directions: Array<String>
-                            ['U', 'D', 'L', 'R'].forEach(async value => {
-                                if (value !== currentLocation.direction) {
-                                    try {
-                                        let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
-                                        let newPointIncomingVectors = await pointToAdd.getIncomingVectors()
-                                        // console.log(newPointIncomingVectors)
-                                        let incomingVector : String = '1' + currentLocation.direction
-                                        let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
-                                        // 
-                                        // let priorTripAlongThisVector = newPointIncomingVectors.find((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === '1' + value)
-                                        if (priorTripAlongThisVector) {
-                                            // Returns the incomingVector object
-                                            //if (currentLocation.heatLoss < priorTripAlongThisVector.lowestIncomingValue) {
-                                            if (await pointToAdd.getLowestIncomingValueForIncomingVector(incomingVector) > (currentLocation.heatLoss + Number(pointToAdd.getValue))) {
-                                                // Has been visited from this vector previously.  Only add if the heat loss when we get there is less than the lowest prior value.
-                                                newPoint.updateIncomingVector(incomingVector, currentLocation.heatLoss + Number(pointToAdd.getValue()))
-                                                currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
-                                            }
-                                        } else {
-                                            // Haven't visited this location before
-                                            currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
-                                        }
-                                        // keep updating here
-                                    } catch (error) {
-                                        console.log(`(1) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${value}`)
-                                    }
-                                }
-                            })
+                        await addEligibleNeighbors(grid, currentLocation, currentLocations)
+                        currentLocation.row = newRow
+                        currentLocation.column = newColumn
+                        // let directions: Array<String>
+                        //     ['U', 'D', 'L', 'R'].forEach(async value => {
+                        //         if (value !== currentLocation.direction) {
+                        //             try {
+                        //                 let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
+                        //                 let newPointIncomingVectors = await pointToAdd.getIncomingVectors()
+                        //                 // console.log(newPointIncomingVectors)
+                        //                 let incomingVector : String = '1' + currentLocation.direction
+                        //                 let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
+                        //                 // 
+                        //                 // let priorTripAlongThisVector = newPointIncomingVectors.find((vector: {incomingDirection: String, lowestIncomingValue: number}) => vector.incomingDirection === '1' + value)
+                        //                 if (priorTripAlongThisVector) {
+                        //                     // Returns the incomingVector object
+                        //                     //if (currentLocation.heatLoss < priorTripAlongThisVector.lowestIncomingValue) {
+                        //                     if (await pointToAdd.getLowestIncomingValueForIncomingVector(incomingVector) > (currentLocation.heatLoss + Number(pointToAdd.getValue))) {
+                        //                         // Has been visited from this vector previously.  Only add if the heat loss when we get there is less than the lowest prior value.
+                        //                         newPoint.updateIncomingVector(incomingVector, currentLocation.heatLoss + Number(pointToAdd.getValue()))
+                        //                         currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
+                        //                     }
+                        //                 } else {
+                        //                     // Haven't visited this location before
+                        //                     currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
+                        //                 }
+                        //                 // keep updating here
+                        //             } catch (error) {
+                        //                 console.log(`(1) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${value}`)
+                        //             }
+                        //         }
+                        //     })
                     }
                     
                     await newPoint.setHasBeenVisited(true)
-                    // if (await newPoint.getLowestIncomingValue() < currentLocation.heatLoss) await newPoint.setLowestIncomingValue(currentLocation.heatLoss)
                     // moved from here
                 } else {
                     // Either already moved 3 times in this direction or the newPoint can't be moved to
@@ -221,19 +223,6 @@ export async function solvePartOne ( filename : string) {
                 //         }
                 //     }
                 // })
-                
-                
-                // let directions: Array<String>
-                //     ['U', 'D', 'L', 'R'].forEach(async value => {
-                //         if (value !== currentLocation.direction) {
-                //             try {
-                //                 let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, value)
-                //                 if (!await pointToAdd.getHasBeenVisited()) currentLocations.push(new LavaPoint(currentLocation.row, currentLocation.column, newPoint.value, value, currentLocation.heatLoss))
-                //             } catch (error) {
-                //                 console.log('Cannot move to location')
-                //             }
-                //         }
-                //     })
                 currentLocations.splice(locationNumber, 1)
                 locationNumber--
                 continue 
@@ -280,7 +269,7 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
 
 }
 
-solvePartOne('./tests/data/input2.txt')
+solvePartOne('./tests/data/input.txt')
     .then(answer => console.log('answer:', answer))
 
     // should be 102 with test input
