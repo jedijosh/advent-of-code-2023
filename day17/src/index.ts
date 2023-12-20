@@ -43,15 +43,12 @@ class PriorityQueue {
 export async function solvePartOne ( filename : string) {
     let counter: number = 0
     let fileLines : String[] = await parseFileIntoArrayOfLines(filename)
-    // console.log(fileLines)
     let grid: Grid = new Grid(fileLines)
     let leastAmountOfHeatLoss = 10000000
     let bestPath: Array<{row: number, column: number}> = new Array()
-    // console.log(grid)
     
     let currentLocations: Array<LavaPoint> = new Array()
     currentLocations.push(new LavaPoint(0, 0, '0', 'R', 0, 0, []))
-    // console.log(currentLocations)
     let goalRowLocation: number = grid.numberOfRows - 1
     let goalColumnLocation: number = grid.numberOfColumns - 1
 
@@ -74,8 +71,7 @@ export async function solvePartOne ( filename : string) {
     // When planning a route, it is actually not necessary to wait until the destination node is "visited" as above: the algorithm can stop once the destination node has the smallest tentative distance among all "unvisited" nodes (and thus could be selected as the next "current"). 
 
     
-    
-    // Find a viable path
+    // Find a viable path so least amount of heat loss can be set to a value less than "infinity"
     let foundAPathToExit = false
     let currentSearchLocation = new LavaPoint(0, 0, '0', 'R', 0, 0, [])
     while (!foundAPathToExit) {
@@ -86,16 +82,17 @@ export async function solvePartOne ( filename : string) {
             break
         }
         
+        // console.log(`At ${currentSearchLocation.row}, ${currentSearchLocation.column} going direction ${currentSearchLocation.direction}, current heat loss is ${currentSearchLocation.heatLoss}`)
         // Move
         let newPoint: Point
-        if (currentSearchLocation.row < grid.numberOfRows ) {
+        if (currentSearchLocation.row < (grid.numberOfRows - 1) ) {
             newPoint = await grid.getNextLocation(currentSearchLocation.row, currentSearchLocation.column, 'D')
             currentSearchLocation.row = await newPoint.getRow()
             currentSearchLocation.column = await newPoint.getColumn()
             currentSearchLocation.heatLoss += Number(await newPoint.getValue())
             currentSearchLocation.path.push({row: currentSearchLocation.row, column: currentSearchLocation.column, heatLoss: currentSearchLocation.heatLoss})
         }
-        if (currentSearchLocation.row < grid.numberOfColumns ) {
+        if (currentSearchLocation.column < (grid.numberOfColumns - 1) ) {
             newPoint = await grid.getNextLocation(currentSearchLocation.row, currentSearchLocation.column, 'R')
             currentSearchLocation.row = await newPoint.getRow()
             currentSearchLocation.column = await newPoint.getColumn()
@@ -144,72 +141,6 @@ export async function solvePartOne ( filename : string) {
         }
         await addEligibleNeighbors(grid, currentLocation, currentLocations)
 
-        // Try to see if we can move again in the same direction
-        // let newPoint: Point 
-        // try {
-        //     newPoint = await grid.getNextLocation(currentLocation.row, currentLocation.column, currentLocation.direction)
-        //     if (currentLocation.numberOfMovesInThisDirection < 2 && newPoint) {
-        //         // Can still move in same direction as haven't moved 3 times in this direction yet
-        //         // Find the new location details
-        //         currentLocation.numberOfMovesInThisDirection++
-        //         let newHeatLoss: number = currentLocation.heatLoss + Number(await newPoint.getValue())
-                
-        //         let newRow = await newPoint.getRow()
-        //         let newColumn = await newPoint.getColumn()
-        //         let incomingVector : String = currentLocation.numberOfMovesInThisDirection.toString() + currentLocation.direction
-        //         //console.log(`newHeatLoss: ${newHeatLoss}`)
-        //         // console.log(`next location to search is ${newRow}, ${newColumn} with vector ${incomingVector}`)
-                
-        //         // If has already been visited from the same incoming vector 
-        //         // but the current heat loss is less than the heat loss when it was visited, keep this alive
-        //         let priorTripAlongThisVector = await newPoint.hasBeenVisitedFromVector(incomingVector)
-        //         if (priorTripAlongThisVector) {
-        //             // If the node has been visited from this vector, check if the incoming value is less than
-        //             // or equal to the prior visit
-        //             if (newHeatLoss <= await newPoint.getLowestIncomingValueForIncomingVector(incomingVector)) {
-        //                 // console.log(`new heat loss ${newHeatLoss} is less than old heat loss ${await newPoint.getLowestIncomingValueForIncomingVector(incomingVector)}`)
-        //                 await newPoint.updateIncomingVector(incomingVector, newHeatLoss)
-                        
-        //                 // Try to add the other directions to the stack
-        //                 await addEligibleNeighbors(grid, currentLocation, currentLocations)
-        //                 currentLocation.row = newRow
-        //                 currentLocation.column = newColumn
-        //                 currentLocation.heatLoss = newHeatLoss
-        //             } else {
-        //                 console.log('not continuing with search')
-        //             }
-        //         } else {
-        //             // Has not been visited from this incomingVector.  Log incoming vector for future trips
-        //             // console.log(`next location to search ${newRow}, ${newColumn} going direction ${currentLocation.direction} has not been seached from ${incomingVector}`)
-        //             await newPoint.addNewIncomingVector({incomingDirection: incomingVector, lowestIncomingValue: newHeatLoss})
-        //             await addEligibleNeighbors(grid, currentLocation, currentLocations)
-        //             currentLocation.row = newRow
-        //             currentLocation.column = newColumn
-        //             currentLocation.heatLoss = newHeatLoss
-        //         }
-                
-        //         await newPoint.setHasBeenVisited(true)
-        //         // moved from here
-        //     } else {
-        //         // Either already moved 3 times in this direction or the newPoint can't be moved to
-        //         // console.log(`Can't move any further in direction ${currentLocation.direction}, pruning search`)
-        //         await addEligibleNeighbors(grid, currentLocation, currentLocations)
-        //         continue
-        //     }
-        // } catch (error) {
-        //     // Error was thrown, can't move in that direction any further
-        //     // console.log(`Error was thrown moving in direction ${currentLocation.direction} from ${currentLocation.row}, ${currentLocation.column}`)
-        //     // console.log(error)
-        //     if (currentLocation.row === goalRowLocation && currentLocation.column === goalColumnLocation) {
-        //         // Reached goal
-        //         if (leastAmountOfHeatLoss > currentLocation.heatLoss) leastAmountOfHeatLoss = currentLocation.heatLoss
-        //     }
-        //     await addEligibleNeighbors(grid, currentLocation, currentLocations)
-        //     continue 
-        // }
-        
-        // console.log('currentLocations')
-        // console.log(currentLocations)
         currentLocations.sort((lavaPointA, lavaPointB) => {
             // return (lavaPointA.heatLoss / lavaPointA.path.length) - (lavaPointB.heatLoss / lavaPointB.path.length))
             let averageHeatLossPerMoveA = lavaPointA.heatLoss / lavaPointA.path.length
@@ -219,11 +150,6 @@ export async function solvePartOne ( filename : string) {
             // console.log(`avgA: ${averageHeatLossPerMoveA}, distA: ${minimumStepsFromGoalA}, avgB: ${averageHeatLossPerMoveB}, distB: ${minimumStepsFromGoalB}`)
             return (averageHeatLossPerMoveA * minimumStepsFromGoalA) - (averageHeatLossPerMoveB * minimumStepsFromGoalB)
         })
-        // if (counter === 10) break
-        // }
-        // console.log('currentLocations')
-        // console.log(currentLocations)
-        // break
     }
     console.log('Best path is:')
     bestPath.forEach(point => {
@@ -291,7 +217,8 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
 }
 
 solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/src/input.txt')
+// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/input.txt')
     .then(answer => console.log('answer:', answer))
 
-    // should be 102 with test input
+    // 1218 is too high for my input
+    // Answer is not 1216
