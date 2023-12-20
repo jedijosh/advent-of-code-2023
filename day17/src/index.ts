@@ -216,9 +216,10 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
     }
 }
 
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/input.txt')
+// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt')
+solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/input.txt')
     .then(answer => console.log('answer:', answer))
 
     // 1218 is too high for my input
     // Answer is not 1216
+    // Answer is not 1210
