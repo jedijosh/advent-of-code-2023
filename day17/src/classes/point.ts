@@ -58,35 +58,36 @@ export class Point {
     }
 
     public async getLowestIncomingValueForIncomingVector(incomingVector: String) {
-        // let lowestValueFound = MAX_VALUE
-        // let magnitudeToFind: number = Number(incomingVector.substring(0, 1))
-        // while (magnitudeToFind >= 1) {
-        //     let vectorToFind = magnitudeToFind.toString() + incomingVector.substring(1,2)
-        //     console.log('vector to find', vectorToFind)
-        //     console.log('searching', this.incomingVectors)
-        //     let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
-        //         return vector.incomingDirection === vectorToFind
-        //     })
-        //     console.log('index to retrieve', indexToRetrieve)
-        //     if (indexToRetrieve !== -1) {
-        //         if (this.incomingVectors[indexToRetrieve].lowestIncomingValue < lowestValueFound) lowestValueFound = this.incomingVectors[indexToRetrieve].lowestIncomingValue
-        //     }
-        //     magnitudeToFind--
+        // 12232 with old function, 7141 with new
+        let lowestValueFound = MAX_VALUE
+        let magnitudeToFind: number = Number(incomingVector.substring(0, 1))
+        while (magnitudeToFind >= 0) {
+            let vectorToFind = magnitudeToFind.toString() + incomingVector.substring(1,2)
+            // console.log('vector to find', vectorToFind)
+            // console.log('searching', this.incomingVectors)
+            let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
+                return vector.incomingDirection === vectorToFind
+            })
+            // console.log('index to retrieve', indexToRetrieve)
+            if (indexToRetrieve !== -1) {
+                if (this.incomingVectors[indexToRetrieve].lowestIncomingValue < lowestValueFound) lowestValueFound = this.incomingVectors[indexToRetrieve].lowestIncomingValue
+            }
+            magnitudeToFind--
 
-        // }
-        // return lowestValueFound
-        
-        let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
-            return vector.incomingDirection === incomingVector
-            // If an existing vector has the same direction, lower magnitude, and lower or equal value, return that value?
-            // return vector.incomingDirection.substring(1,2) === incomingVector.substring(1,2) && Number(vector.incomingDirection.substring(0,1)) <= Number(incomingVector.substring(0,1))
-        })
-        // console.log('index to retrieve', indexToRetrieve)
-        if (indexToRetrieve !== -1) {
-            return this.incomingVectors[indexToRetrieve].lowestIncomingValue
-        } else {
-            return MAX_VALUE
         }
+        return lowestValueFound
+        
+        // let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
+        //     return vector.incomingDirection === incomingVector
+        //     // If an existing vector has the same direction, lower magnitude, and lower or equal value, return that value?
+        //     // return vector.incomingDirection.substring(1,2) === incomingVector.substring(1,2) && Number(vector.incomingDirection.substring(0,1)) <= Number(incomingVector.substring(0,1))
+        // })
+        // // console.log('index to retrieve', indexToRetrieve)
+        // if (indexToRetrieve !== -1) {
+        //     return this.incomingVectors[indexToRetrieve].lowestIncomingValue
+        // } else {
+        //     return MAX_VALUE
+        // }
     }
 
     public async updateIncomingVector(incomingDirection: String, newLowestIncomingValue: number) {
