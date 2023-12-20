@@ -7,9 +7,9 @@ class LavaPoint extends Point {
     heatLoss: number
     direction: String
     numberOfMovesInThisDirection: number
-    path: Array<{row: number, column: number}>
+    path: Array<{row: number, column: number, heatLoss: number}>
 
-    constructor(row: number, column: number, value: String, direction: String, heatLoss: number, magnitude: number, path: Array<{row: number, column: number}> = []) {
+    constructor(row: number, column: number, value: String, direction: String, heatLoss: number, magnitude: number, path: Array<{row: number, column: number, heatLoss: number}> = []) {
         super(row, column, value)
         this.heatLoss = heatLoss
         this.direction = direction
@@ -93,19 +93,20 @@ export async function solvePartOne ( filename : string) {
             currentSearchLocation.row = await newPoint.getRow()
             currentSearchLocation.column = await newPoint.getColumn()
             currentSearchLocation.heatLoss += Number(await newPoint.getValue())
-            currentSearchLocation.path.push({row: currentSearchLocation.row, column: currentSearchLocation.column})
+            currentSearchLocation.path.push({row: currentSearchLocation.row, column: currentSearchLocation.column, heatLoss: currentSearchLocation.heatLoss})
         }
         if (currentSearchLocation.row < grid.numberOfColumns ) {
             newPoint = await grid.getNextLocation(currentSearchLocation.row, currentSearchLocation.column, 'R')
             currentSearchLocation.row = await newPoint.getRow()
             currentSearchLocation.column = await newPoint.getColumn()
             currentSearchLocation.heatLoss += Number(await newPoint.getValue())
-            currentSearchLocation.path.push({row: currentSearchLocation.row, column: currentSearchLocation.column})
+            currentSearchLocation.path.push({row: currentSearchLocation.row, column: currentSearchLocation.column, heatLoss: currentSearchLocation.heatLoss})
         }
     }
 
     console.log(`Found a path to exit with heat loss ${leastAmountOfHeatLoss}`)   
     while (currentLocations.length > 0 ) {
+        // console.log('-----------------------------------------------')
         let firstItemInArray: any = currentLocations.shift()
         if (!firstItemInArray) break
         let currentLocation: LavaPoint = firstItemInArray
@@ -115,10 +116,10 @@ export async function solvePartOne ( filename : string) {
         // Get the current location's data
         if (counter % 100000 === 0) console.log(`counter is ${counter}, number of searches ${currentLocations.length}, at ${currentLocation.row},${currentLocation.column}`)
         counter++
-        currentLocation.path.push({row: currentLocation.row, column: currentLocation.column})
+        currentLocation.path.push({row: currentLocation.row, column: currentLocation.column, heatLoss: currentLocation.heatLoss})
         // console.log('currentLocation', currentLocation)
         // console.log('currentLocation path', JSON.stringify(currentLocation.path))
-        console.log(`at ${currentLocation.row}, ${currentLocation.column} going direction ${currentLocation.direction}, current heat loss is ${currentLocation.heatLoss}`)
+        // console.log(`At ${currentLocation.row}, ${currentLocation.column} going direction ${currentLocation.direction}, current heat loss is ${currentLocation.heatLoss}`)
         if (currentLocation.row === goalRowLocation && currentLocation.column === goalColumnLocation) {
             // Reached goal
             console.log(`Reached goal, heat loss is ${currentLocation.heatLoss}`)
@@ -209,7 +210,15 @@ export async function solvePartOne ( filename : string) {
         
         // console.log('currentLocations')
         // console.log(currentLocations)
-        currentLocations.sort((lavaPointA, lavaPointB) => lavaPointA.heatLoss - lavaPointB.heatLoss)
+        currentLocations.sort((lavaPointA, lavaPointB) => {
+            // return (lavaPointA.heatLoss / lavaPointA.path.length) - (lavaPointB.heatLoss / lavaPointB.path.length))
+            let averageHeatLossPerMoveA = lavaPointA.heatLoss / lavaPointA.path.length
+            let averageHeatLossPerMoveB = lavaPointB.heatLoss / lavaPointB.path.length
+            let minimumStepsFromGoalA = (goalRowLocation - lavaPointA.row) + (goalColumnLocation - lavaPointA.column)
+            let minimumStepsFromGoalB = (goalRowLocation - lavaPointB.row) + (goalColumnLocation - lavaPointB.column)
+            // console.log(`avgA: ${averageHeatLossPerMoveA}, distA: ${minimumStepsFromGoalA}, avgB: ${averageHeatLossPerMoveB}, distB: ${minimumStepsFromGoalB}`)
+            return (averageHeatLossPerMoveA * minimumStepsFromGoalA) - (averageHeatLossPerMoveB * minimumStepsFromGoalB)
+        })
         // if (counter === 10) break
         // }
         // console.log('currentLocations')
@@ -217,7 +226,10 @@ export async function solvePartOne ( filename : string) {
         // break
     }
     console.log('Best path is:')
-    console.log(JSON.stringify(bestPath, null, 2))
+    bestPath.forEach(point => {
+        console.log(JSON.stringify(point))
+    })
+    // console.log(JSON.stringify(bestPath, null, 1))
     console.log('Counter', counter)
     return leastAmountOfHeatLoss
 
@@ -229,16 +241,20 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
         // Add all directions except for what the current search's direction      
         let incomingVector : String
         let movesInThisDirection : number
+        if (currentLocation.direction === 'U' && direction === 'D') continue
+        if (currentLocation.direction === 'D' && direction === 'U') continue
+        if (currentLocation.direction === 'L' && direction === 'R') continue
+        if (currentLocation.direction === 'R' && direction === 'L') continue
         if (direction === currentLocation.direction) {
             movesInThisDirection = currentLocation.numberOfMovesInThisDirection + 1
         } else {
-            movesInThisDirection = 1
+            movesInThisDirection = 0
         }
         incomingVector = movesInThisDirection.toString() + currentLocation.direction
         if (movesInThisDirection < 3) {
             try {
                 let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, direction)
-                let incomingVector : String = '0' + direction
+                let incomingVector : String = movesInThisDirection.toString() + direction
                 let hasPreviouslyBeenVisitedFromThisVector: boolean = await pointToAdd.hasBeenVisitedFromVector(incomingVector)
                 // console.log(`has ${pointToAdd.row}, ${pointToAdd.column} been visited from ${incomingVector}? ${hasPreviouslyBeenVisitedFromThisVector}`)
                 // console.log(`new point ${pointToAdd.row}, ${pointToAdd.column} has value ${await pointToAdd.getValue()}`)
@@ -253,10 +269,12 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
                         // console.log(`Adding ${pointToAdd.row}, ${pointToAdd.column} as ${newHeatLoss} is less than ${currentLowestValue}`)
                         await pointToAdd.updateIncomingVector(incomingVector, newHeatLoss)
                         currentLocations.push(new LavaPoint(pointToAdd.row, pointToAdd.column, pointToAdd.value, direction, newHeatLoss, movesInThisDirection, currentLocation.path.slice()))
+                    } else {
+                        // console.log(`Not adding ${pointToAdd.row}, ${pointToAdd.column} as ${newHeatLoss} is greater than ${currentLowestValue}`)
                     }
                 } else {
                     // Hasn't previously been visited from this vector.
-                    // console.log(`Adding ${pointToAdd.row}, ${pointToAdd.column} with ${newHeatLoss} as it has not been visited from direction ${direction}`)
+                    // console.log(`Adding ${pointToAdd.row}, ${pointToAdd.column} with ${newHeatLoss} as it has not been visited going direction ${direction}`)
                     await pointToAdd.addNewIncomingVector({incomingDirection: incomingVector, lowestIncomingValue: newHeatLoss})
                     currentLocations.push(new LavaPoint(pointToAdd.row, pointToAdd.column, pointToAdd.value, direction, newHeatLoss, movesInThisDirection, currentLocation.path.slice()))
                 }
@@ -272,7 +290,7 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: LavaPoint, cu
     }
 }
 
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input3.txt')
+solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt')
 // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/src/input.txt')
     .then(answer => console.log('answer:', answer))
 

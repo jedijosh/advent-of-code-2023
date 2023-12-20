@@ -58,6 +58,24 @@ export class Point {
     }
 
     public async getLowestIncomingValueForIncomingVector(incomingVector: String) {
+        // let lowestValueFound = MAX_VALUE
+        // let magnitudeToFind: number = Number(incomingVector.substring(0, 1))
+        // while (magnitudeToFind >= 1) {
+        //     let vectorToFind = magnitudeToFind.toString() + incomingVector.substring(1,2)
+        //     console.log('vector to find', vectorToFind)
+        //     console.log('searching', this.incomingVectors)
+        //     let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
+        //         return vector.incomingDirection === vectorToFind
+        //     })
+        //     console.log('index to retrieve', indexToRetrieve)
+        //     if (indexToRetrieve !== -1) {
+        //         if (this.incomingVectors[indexToRetrieve].lowestIncomingValue < lowestValueFound) lowestValueFound = this.incomingVectors[indexToRetrieve].lowestIncomingValue
+        //     }
+        //     magnitudeToFind--
+
+        // }
+        // return lowestValueFound
+        
         let indexToRetrieve: number = this.incomingVectors.findIndex((vector: {incomingDirection: String, lowestIncomingValue: number}) => {
             return vector.incomingDirection === incomingVector
             // If an existing vector has the same direction, lower magnitude, and lower or equal value, return that value?
