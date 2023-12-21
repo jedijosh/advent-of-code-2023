@@ -1,8 +1,8 @@
 export class Vector {
-    direction: number
+    direction: String
     magnitude: number
 
-    constructor(direction: number, magnitude: number) {
+    constructor(magnitude: number, direction: String) {
         this.direction = direction
         this.magnitude = magnitude
     }

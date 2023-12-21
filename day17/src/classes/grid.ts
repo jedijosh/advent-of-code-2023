@@ -1,4 +1,5 @@
 import { Point } from './point'
+import { Vector } from '../classes/Vector'
 
 export class Grid {
     numberOfRows: number
@@ -28,7 +29,6 @@ export class Grid {
     public async canMoveToLocation(oldRowNumber: number, oldColumnNumber: number, newRowNumber: number, newColumnNumber: number) {
         if (newRowNumber < 0 || newRowNumber >= this.numberOfRows) return false
         if (newColumnNumber < 0 || newColumnNumber >= this.numberOfColumns) return false
-        let newPoint: Point = this.gridPoints[newRowNumber][newColumnNumber]
         return true
     }
 

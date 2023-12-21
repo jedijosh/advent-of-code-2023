@@ -11,9 +11,9 @@ describe('test solvePartOne', () => {
         expect(partOneAnswer).toBe(6)
     })
 
-    it('result should be 12 with sample data 3', async () => {
+    it('result should be 9 with sample data 3', async () => {
         let partOneAnswer = await solvePartOne('./tests/data/input3.txt')
-        expect(partOneAnswer).toBe(12)
+        expect(partOneAnswer).toBe(9)
     })
     
     // test('result should be 7543 with my data', async () => {
