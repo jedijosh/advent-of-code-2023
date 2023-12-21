@@ -61,7 +61,7 @@ export class Point {
         // 12232 with old function, 7141 with new
         let lowestValueFound = MAX_VALUE
         let magnitudeToFind: number = Number(incomingVector.substring(0, 1))
-        while (magnitudeToFind >= 0) {
+        while (magnitudeToFind > 0) {
             let vectorToFind = magnitudeToFind.toString() + incomingVector.substring(1,2)
             // console.log('vector to find', vectorToFind)
             // console.log('searching', this.incomingVectors)
