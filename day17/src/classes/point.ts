@@ -61,42 +61,30 @@ export class Point {
 
     public async getLowestIncomingValueForIncomingVector(incomingVector: Vector) {
         // 12232 with old function, 7141 with new
-        // let lowestCostFound = MAX_VALUE
-        // let betterPathWithLowerMagnitude = false
-        // for (let magnitude = incomingVector.magnitude; magnitude > 0; magnitude--) {
-        //     // let vectorToFind = magnitude.toString() + incomingVector.substring(1,2)
-        //     let vectorToFind = new Vector(magnitude, incomingVector.direction)
+        let lowestCostFound = MAX_VALUE
+        let betterPathWithLowerMagnitude = false
+        for (let magnitude = incomingVector.magnitude; magnitude > 0; magnitude--) {
+            let vectorToFind = new Vector(magnitude, incomingVector.direction)
 
-        //     // console.log('vector to find', vectorToFind)
-        //     // console.log('searching', this.incomingVectors)
-        //     let indexToRetrieve: number = this.incomingVectors.findIndex((vectorToCheck: {vector: Vector, lowestCost: number}) => {
-        //         return vectorToCheck.vector.direction === vectorToFind.direction && vectorToCheck.vector.magnitude === vectorToFind.magnitude
-        //     })
-        //     // console.log('index to retrieve', indexToRetrieve)
-        //     if (indexToRetrieve !== -1) {
-        //         if (this.incomingVectors[indexToRetrieve].lowestCost < lowestCostFound) {
-        //             lowestCostFound = this.incomingVectors[indexToRetrieve].lowestCost
-        //             if (vectorToFind !== incomingVector) betterPathWithLowerMagnitude = true
-        //         }
-        //     }
+            // console.log('vector to find', vectorToFind)
+            // console.log('searching', this.incomingVectors)
+            let indexToRetrieve: number = this.incomingVectors.findIndex((vectorToCheck: {vector: Vector, lowestCost: number}) => {
+                // return vectorToCheck.vector.direction === vectorToFind.direction && vectorToCheck.vector.magnitude === vectorToFind.magnitude
+                return vectorToCheck.vector.direction === incomingVector.direction && vectorToCheck.vector.magnitude === magnitude
+            })
+            // console.log('index to retrieve', indexToRetrieve)
+            if (indexToRetrieve !== -1) {
+                if (this.incomingVectors[indexToRetrieve].lowestCost < lowestCostFound) {
+                    lowestCostFound = this.incomingVectors[indexToRetrieve].lowestCost
+                    if (vectorToFind !== incomingVector) betterPathWithLowerMagnitude = true // We've already checked the cost so if not the same
+                    // if (magnitude !== incomingVector.magnitude) betterPathWithLowerMagnitude = true
+                    break
+                }
+            }
 
-        // }
-        // // If there is already a path to this node with the same direction, lower magnitude, and lower cost, return -1 as this is not the most efficient path
-        // return betterPathWithLowerMagnitude ? -1 : lowestCostFound
-
-
-        
-        let indexToRetrieve: number = this.incomingVectors.findIndex((vectorToCheck: {vector: Vector, lowestCost: number}) => {
-            return vectorToCheck.vector.direction === incomingVector.direction && vectorToCheck.vector.magnitude === incomingVector.magnitude
-            // If an existing vector has the same direction, lower magnitude, and lower or equal value, return that value?
-            // return vector.incomingDirection.substring(1,2) === incomingVector.substring(1,2) && Number(vector.incomingDirection.substring(0,1)) <= Number(incomingVector.substring(0,1))
-        })
-        // console.log('index to retrieve', indexToRetrieve)
-        if (indexToRetrieve !== -1) {
-            return this.incomingVectors[indexToRetrieve].lowestCost
-        } else {
-            return MAX_VALUE
         }
+        // If there is already a path to this node with the same direction, lower magnitude, and lower cost, return -1 as this is not the most efficient path
+        return betterPathWithLowerMagnitude ? -1 : lowestCostFound
     }
 
     public async updateIncomingVector(vectorToUpdate: Vector, newLowestIncomingValue: number) {

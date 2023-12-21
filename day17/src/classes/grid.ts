@@ -32,25 +32,26 @@ export class Grid {
         return true
     }
 
-    public async getNextLocation(oldRowNumber: number, oldColumnNumber: number, direction: String, numberOfMoves: number = 1) {
+    // public async getNextLocation(oldRowNumber: number, oldColumnNumber: number, direction: String, numberOfMoves: number = 1) {
+    public async getNextLocation(oldRowNumber: number, oldColumnNumber: number, vector: Vector) {
         let newRowNumber: number
         let newColumnNumber: number
-        switch (direction) {
+        switch (vector.direction) {
             case 'U':
-                newRowNumber = oldRowNumber - numberOfMoves
+                newRowNumber = oldRowNumber - vector.magnitude
                 newColumnNumber = oldColumnNumber
                 break
             case 'D':
-                newRowNumber = oldRowNumber + numberOfMoves
+                newRowNumber = oldRowNumber + vector.magnitude
                 newColumnNumber = oldColumnNumber
                 break
             case 'L':
                 newRowNumber = oldRowNumber
-                newColumnNumber = oldColumnNumber - numberOfMoves
+                newColumnNumber = oldColumnNumber - vector.magnitude
                 break
             case 'R':
                 newRowNumber = oldRowNumber
-                newColumnNumber = oldColumnNumber + numberOfMoves
+                newColumnNumber = oldColumnNumber + vector.magnitude
                 break
             default:
                 newRowNumber = -1
