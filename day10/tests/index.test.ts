@@ -11,25 +11,20 @@ describe('test solvePartOne', () => {
         expect(result).toBe(4)
     })
 
-    // it('result should be 9 with sample data 3', async () => {
-    //     let partOneAnswer = await solvePartOne('./tests/data/input3.txt')
-    //     expect(partOneAnswer).toBe(9)
-    // })
+    test('result should be 6828 with my data', async () => {
+        let partOneAnswer = await solvePartOne('./input.txt')
+        expect(partOneAnswer).toBe(6828)
+    })
     
-    // test('result should be 6828 with my data', async () => {
-    //     let partOneAnswer = await solvePartOne('./input.txt')
-    //     expect(partOneAnswer).toBe(6828)
-    // })
+    test('part 2 result should be 4 with sample data', async () => {
+        let partTwoAnswer = await solvePartOne('./tests/data/input-part2.txt')
+        expect(partTwoAnswer).toBe(4)
+    })
     
-    // test('part 2 result should be 94 with sample data', async () => {
-    //     let partTwoAnswer = await solvePartOne('./tests/data/input.txt')
-    //     expect(partTwoAnswer).toBe(94)
-    // })
-    
-    // test('part 2 result should be 8231 with my data', async () => {
-    //     let partTwoAnswer = await index.solvePartTwo('./input.txt')
-    //     expect(partTwoAnswer).toBe(8231)
-    // })
+    test('part 2 result should be 459 with my data', async () => {
+        let partTwoAnswer = await solvePartTwo('./input.txt')
+        expect(partTwoAnswer).toBe(459)
+    })
 })
 
 describe('test findNextDirection', () => {
