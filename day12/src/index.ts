@@ -35,43 +35,30 @@ export async function solvePartOne ( filename : string) {
         console.log(`Know of ${numberOfKnownDamagedSprings} and there are ${totalNumberOfDamagedSprings} total so ${numberOfSpringsToFind} to find`)
 
         let unknownLocations = conditionRecord.matchAll(/\?{1}/g) || []
-        let positionOfUnknownLocations = []
+        let positionOfUnknownLocations: Array<number> = []
         for (let location of unknownLocations) {
-            positionOfUnknownLocations.push(location.index)
+            if (location.index !== undefined) positionOfUnknownLocations.push(location.index)
         }
         console.log('positionOfUnknownLocations', positionOfUnknownLocations)
-
-        // 1, 2, 5, 6, 10 - need to find 3
-        // 1, 2, 5
-        // 1, 2, 6
-        // 1, 2, 10
-        // 2, 5, 6
-        // 2, 5, 10
-        // 5, 6, 10
-        let permutations = []
-        for (let i = 0; i < positionOfUnknownLocations.length; i++) {
-            let numbersToAddToPermutation = numberOfSpringsToFind
-            let newPermutation = []
-            newPermutation.push(positionOfUnknownLocations[i])
-            while ()
-            for (let j = 1; j < positionOfUnknownLocations.length; j++) {
-
-            }
-        }
-
-        // Calculate all possible permutations of substitutions
-        let pathsToFind: Array<{firstGalaxy: Point, secondGalaxy: Point}> = []
-        for (let i = 0; i < galaxyLocations.length; i++) {
-            for (let j = i + 1; j < galaxyLocations.length; j++) {
-                pathsToFind.push({firstGalaxy: galaxyLocations[i], secondGalaxy: galaxyLocations[j]})
-            }
-        }
-
-
+       
+        console.log(`calling functions with ${positionOfUnknownLocations} and ${numberOfSpringsToFind}`)
+        
+        // let result: Array<Array<number>> = []
+        // result = findCombinations([], [1, 2, 5], 3)
+        // result = await findCombinations([], [1, 2, 5, 6, 10], 3)
         
 
+        let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionOfUnknownLocations, numberOfSpringsToFind)
+        console.log('combinations', combinations)
 
+        // let stringWithUnknownReplaced = conditionRecord.replace('?', '.')
+        // console.log('stringWithUnknownReplaced', stringWithUnknownReplaced)
+        // for (let combinationNumber = 0; combinationNumber < combinations.length; combinationNumber++) {
+        //     for (let )
+        //     let stringForCombination = 
+        // }
         
+
 
         // See if there are periods separating all of the groups?
         let conditionRecordGroups = conditionRecord.matchAll(/\.+/g)
@@ -84,6 +71,34 @@ export async function solvePartOne ( filename : string) {
     return pathLength
 }
 
+// Inital call will pass in an empty array.
+// Build arrays with length 
+export function findCombinations(inputArray: Array<number> = [], availableValues: Array<number>, combinationLength: number): Array<Array<number>> {
+    // If the remaining values complete the combination length, combine with existing array and return.
+    console.log('inputArray', inputArray)
+    console.log('availableValues', availableValues)
+    if (inputArray.length + availableValues.length === combinationLength) {
+        console.log('returning', inputArray.concat(availableValues))
+        return [inputArray.concat(availableValues)]
+    } else if (inputArray.length === combinationLength ) {
+        // Have enough values in the array, return the result
+        return [inputArray]
+    } else {
+        // Push combinations with and without the current element
+        return findCombinations(inputArray.concat(availableValues.slice(0,1)), availableValues.slice(1), combinationLength)
+            .concat(findCombinations(inputArray, availableValues.slice(1), combinationLength))
+    
+    }
+    // 1, 2, 5, 6, 10 - need to find 3
+    // 1, 2, 5
+    // 1, 2, 6
+    // 1, 2, 10
+    // 2, 5, 6
+    // 2, 5, 10
+    // 5, 6, 10
+}
+
+
 export async function solvePartTwo ( filename : string) {
     let pathLength: number = 0
     let fileLines : String[] = await parseFileIntoArrayOfLines(filename)
@@ -94,8 +109,8 @@ export async function solvePartTwo ( filename : string) {
 
 
 
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
+solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input2.txt')
+// // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
     .then(answer => console.log('answer:', answer))
 
 // solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
