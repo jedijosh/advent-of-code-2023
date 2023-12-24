@@ -1,19 +1,19 @@
 import { solvePartOne, findCombinations } from '../src/index'
 
 describe('test solvePartOne', () => {
-    it('result should be 374 with sample data', async () => {
+    it('result should be 21 with sample data', async () => {
         let result = await solvePartOne('./tests/data/input.txt')
-        expect(result).toBe(374)
+        expect(result).toBe(21)
     })
 
-    test('result should be 9370588 with my data', async () => {
+    test('result should be 7732 with my data', async () => {
         let partOneAnswer = await solvePartOne('./input.txt')
-        expect(partOneAnswer).toBe(9370588)
+        expect(partOneAnswer).toBe(7732)
     })
     
-    test('part 2 result should be 8410 with sample data', async () => {
-        let partTwoAnswer = await solvePartOne('./tests/data/input-part2.txt')
-        expect(partTwoAnswer).toBe(8410)
+    test('part 2 result should be 525152 with sample data', async () => {
+        let partTwoAnswer = await solvePartTwo('./tests/data/input-part2.txt')
+        expect(partTwoAnswer).toBe(525152)
     })
     
     // test('part 2 result should be 459 with my data', async () => {
