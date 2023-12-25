@@ -1,5 +1,9 @@
 {
-  "include": ["src/**/*", "package.json"],
+  "include": [
+    "src/**/*", 
+    "tests/**/*", 
+    "package.json"
+  ],
   "exclude": [
     "build",
     "node_modules"
@@ -10,8 +14,8 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "outDir": "build", 
     "resolveJsonModule": true,
     "strict": true,  

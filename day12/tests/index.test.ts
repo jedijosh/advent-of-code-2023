@@ -1,4 +1,4 @@
-import { solvePartOne, findCombinations } from '../src/index'
+import { solvePartOne, solvePartTwo, findCombinations } from '../src/index'
 
 describe('test solvePartOne', () => {
     it('result should be 21 with sample data', async () => {
@@ -12,7 +12,7 @@ describe('test solvePartOne', () => {
     })
     
     test('part 2 result should be 525152 with sample data', async () => {
-        let partTwoAnswer = await solvePartTwo('./tests/data/input-part2.txt')
+        let partTwoAnswer = await solvePartTwo('./tests/data/input.txt')
         expect(partTwoAnswer).toBe(525152)
     })
     

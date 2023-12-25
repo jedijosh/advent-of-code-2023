@@ -1,5 +1,9 @@
 {
-  "include": ["src/**/*", "package.json"],
+  "include": [
+    "src/**/*", 
+    "tests/**/*", 
+    "package.json"
+  ],
   "exclude": [
     "build",
     "node_modules"

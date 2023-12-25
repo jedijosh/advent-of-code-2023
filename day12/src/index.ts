@@ -34,12 +34,7 @@ export async function solvePartOne ( filename : string) {
         for (let location of unknownLocations) {
             if (location.index !== undefined) positionOfUnknownLocations.push(location.index)
         }
-        if (LOGGING) console.log('positionOfUnknownLocations', positionOfUnknownLocations)
-        
-        // let result: Array<Array<number>> = []
-        // result = findCombinations([], [1, 2, 5], 3)
-        // result = await findCombinations([], [1, 2, 5, 6, 10], 3)
-        
+        if (LOGGING) console.log('positionOfUnknownLocations', positionOfUnknownLocations)        
 
         let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionOfUnknownLocations, numberOfSpringsToFind)
         if (LOGGING) console.log('combinations', combinations)
