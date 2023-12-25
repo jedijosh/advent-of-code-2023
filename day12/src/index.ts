@@ -112,8 +112,22 @@ export async function solvePartTwo ( filename : string) {
             let newString: string = conditionRecord.substring(0, match.index)
             console.log('length', match.length)
             for (let i = 0; i < match.length; i++) {
-                console.log('popping')
                 groupOrder = groupOrder.split(',').pop() || ''
+            }
+            conditionRecord = newString
+            if (LOGGING) console.log('conditionRecord', conditionRecord)
+            if (LOGGING) console.log('groupOrder', groupOrder)
+        }
+
+        let matchesAtBeginningdOfString = [...conditionRecord.matchAll(/^(\.*\#+\.+)+/g)]
+        for (let match of matchesAtBeginningdOfString) {
+            console.log('match', match)
+            let newString: string = conditionRecord.substring(match.index || 0)
+            console.log('length', match.length)
+            for (let i = 0; i < match.length; i++) {
+                // TODO: Can't pop, need to remove from beginning
+                // Look into using slice to remove from beginning.  Probably need a temp string.
+                // groupOrder = groupOrder.split(',').pop() || ''
             }
             conditionRecord = newString
             if (LOGGING) console.log('conditionRecord', conditionRecord)
