@@ -104,6 +104,17 @@ export async function solvePartTwo ( filename : string) {
         if (LOGGING) console.log('conditionRecord', conditionRecord)
         if (LOGGING) console.log('groupOrder', groupOrder)
 
+        let conditionRecordCopy = conditionRecord.substring(0)
+        let groupOrderCopy = groupOrder.substring(0)
+        for (let i = 0; i < 4; i++) {
+            let newString = conditionRecordCopy.concat('?').concat(conditionRecordCopy)
+            conditionRecord = newString
+            newString = groupOrder + ',' + groupOrderCopy
+            groupOrder = newString
+        }
+        console.log('conditionRecord', conditionRecord)
+        console.log('groupOrder', groupOrder)
+
         // See if we can strip off any of the string from the beginning or the end
         // Look for one or more periods, one or more #, zero or more "." and then end of line
         let matchesAtEndOfString = [...conditionRecord.matchAll(/(\.+\#+\.*)+$/g)]
@@ -134,6 +145,7 @@ export async function solvePartTwo ( filename : string) {
             if (LOGGING) console.log('groupOrder', groupOrder)
         }
 
+
         // Split the line based on "."s.  This will give the total number of sections to be solved
         
         let sectionsToBeSolved = conditionRecord.matchAll(/\.+/g)
@@ -153,51 +165,51 @@ export async function solvePartTwo ( filename : string) {
 
         }
 
-        return 0
+        // return 0
 
 
 
 
         // Calculate the total number of damaged springs for the line
         // Also create a RegEx to check if the full filled in line matches the "groupOrder" numbers
-        // let totalNumberOfDamagedSprings = 0
-        // let regexString = "^\\.*" // might start with periods
-        // for (let number of groupOrder.split(',')) {
-        //     totalNumberOfDamagedSprings += Number(number)
-        //     regexString += "\\#{" + number + "}\\.+"
-        // }
-        // regexString = regexString.substring(0, regexString.length - 1) + '*$'
-        // let regexToMatch = new RegExp(regexString)
+        let totalNumberOfDamagedSprings = 0
+        let regexString = "^\\.*" // might start with periods
+        for (let number of groupOrder.split(',')) {
+            totalNumberOfDamagedSprings += Number(number)
+            regexString += "\\#{" + number + "}\\.+"
+        }
+        regexString = regexString.substring(0, regexString.length - 1) + '*$'
+        let regexToMatch = new RegExp(regexString)
 
-        // let numberOfKnownDamagedSprings = 0
-        // // Find the location of each damaged spring within the condition record.
-        // // Only currently using to calculate how many we know about.
-        // let damagedSpringLocations = conditionRecord.match(/\#{1}/g) || []
-        // numberOfKnownDamagedSprings = damagedSpringLocations.length
-        // let numberOfSpringsToFind: number = totalNumberOfDamagedSprings - numberOfKnownDamagedSprings
-        // if (LOGGING) console.log(`Know of ${numberOfKnownDamagedSprings} and there are ${totalNumberOfDamagedSprings} total so ${numberOfSpringsToFind} to find`)
+        let numberOfKnownDamagedSprings = 0
+        // Find the location of each damaged spring within the condition record.
+        // Only currently using to calculate how many we know about.
+        let damagedSpringLocations = conditionRecord.match(/\#{1}/g) || []
+        numberOfKnownDamagedSprings = damagedSpringLocations.length
+        let numberOfSpringsToFind: number = totalNumberOfDamagedSprings - numberOfKnownDamagedSprings
+        if (LOGGING) console.log(`Know of ${numberOfKnownDamagedSprings} and there are ${totalNumberOfDamagedSprings} total so ${numberOfSpringsToFind} to find`)
 
-        // // Find the positions of each unknown location in the full string
-        // let unknownLocations = conditionRecord.matchAll(/\?{1}/g) || []
-        // let positionOfUnknownLocations: Array<number> = []
-        // for (let location of unknownLocations) {
-        //     if (location.index !== undefined) positionOfUnknownLocations.push(location.index)
-        // }
-        // // if (LOGGING) console.log('positionOfUnknownLocations', positionOfUnknownLocations)        
+        // Find the positions of each unknown location in the full string
+        let unknownLocations = conditionRecord.matchAll(/\?{1}/g) || []
+        let positionOfUnknownLocations: Array<number> = []
+        for (let location of unknownLocations) {
+            if (location.index !== undefined) positionOfUnknownLocations.push(location.index)
+        }
+        // if (LOGGING) console.log('positionOfUnknownLocations', positionOfUnknownLocations)        
 
-        // let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionOfUnknownLocations, numberOfSpringsToFind)
-        // // if (LOGGING) console.log('combinations', combinations)
+        let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionOfUnknownLocations, numberOfSpringsToFind)
+        // if (LOGGING) console.log('combinations', combinations)
 
-        // for (let combinationNumber = 0; combinationNumber < combinations.length; combinationNumber++) {
-        //     let stringToTest = conditionRecord.replace(/\?/g, '.')
-        //     // if (LOGGING) console.log('stringToTest', stringToTest)
-        //     for (let positionNumber of combinations[combinationNumber]) {
-        //         let stringForCombination = stringToTest.substring(0,positionNumber) + '#' + stringToTest.substring(positionNumber+1)
-        //         stringToTest = stringForCombination
-        //     }
-        //     // if (LOGGING) console.log('stringToTest', stringToTest)
-        //     if ( stringToTest.match(regexToMatch)) possibleArrangements++
-        // }
+        for (let combinationNumber = 0; combinationNumber < combinations.length; combinationNumber++) {
+            let stringToTest = conditionRecord.replace(/\?/g, '.')
+            // if (LOGGING) console.log('stringToTest', stringToTest)
+            for (let positionNumber of combinations[combinationNumber]) {
+                let stringForCombination = stringToTest.substring(0,positionNumber) + '#' + stringToTest.substring(positionNumber+1)
+                stringToTest = stringForCombination
+            }
+            // if (LOGGING) console.log('stringToTest', stringToTest)
+            if ( stringToTest.match(regexToMatch)) possibleArrangements++
+        }
     }
 
     return possibleArrangements
