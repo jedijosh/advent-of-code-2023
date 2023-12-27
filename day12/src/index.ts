@@ -147,8 +147,16 @@ export async function solvePartTwo ( filename : string) {
             matchesAtBeginningdOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
         }
 
-        // Split the line based on "."s.  This will give the total number of sections to be solved
+        // See if there are any complete sections which can help break up the overall line
+        // Look for one or more periods, one or more #s, and one or more periods
+        let completeSections = [...conditionRecord.matchAll(/\.{1}\#+\.{1}/g)]
+        console.log('completeSections', completeSections)
+
+
+
         
+        // Split the line based on "."s.  This will give the total number of sections to be solved    
+    
         let sectionsToBeSolved = conditionRecord.matchAll(/\.+/g)
         console.log('sectionsToBeSolved', sectionsToBeSolved)
         // // // If there were periods at the beginning, ignore from the count.
@@ -157,6 +165,8 @@ export async function solvePartTwo ( filename : string) {
             console.log('section', section)
             numberOfSections++
         }
+        console.log('numberOfSections', numberOfSections)
+
         for (let section of sectionsToBeSolved) {
             console.log('section', section)
         }
