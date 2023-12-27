@@ -1,3 +1,4 @@
+import { match } from 'assert'
 import { parseFileIntoArrayOfLines } from './utils'
 
 const LOGGING = true
@@ -77,6 +78,8 @@ export function findCombinations(inputArray: Array<number> = [], availableValues
         return [inputArray]
     } else {
         // Push combinations with and without the current element
+        // console.log(`calling findCombinations with ${inputArray.concat(availableValues.slice(0,1))}| ${availableValues.slice(1)}| and ${combinationLength}`)
+        // console.log(`concating  ${inputArray}| ${availableValues.slice(1)}| and ${combinationLength}`)
         return findCombinations(inputArray.concat(availableValues.slice(0,1)), availableValues.slice(1), combinationLength)
             .concat(findCombinations(inputArray, availableValues.slice(1), combinationLength))
     
@@ -107,44 +110,42 @@ export async function solvePartTwo ( filename : string) {
         let conditionRecordCopy = conditionRecord.substring(0)
         let groupOrderCopy = groupOrder.substring(0)
         for (let i = 0; i < 4; i++) {
-            let newString = conditionRecordCopy.concat('?').concat(conditionRecordCopy)
+            let newString = conditionRecord.concat('?').concat(conditionRecordCopy)
             conditionRecord = newString
             newString = groupOrder + ',' + groupOrderCopy
             groupOrder = newString
         }
-        console.log('conditionRecord', conditionRecord)
-        console.log('groupOrder', groupOrder)
+        console.log('final conditionRecord', conditionRecord)
+        console.log('final groupOrder', groupOrder)
+
+        let groupOrderArray: Array<number> = groupOrder.split(',').map(Number)
 
         // See if we can strip off any of the string from the beginning or the end
         // Look for one or more periods, one or more #, zero or more "." and then end of line
-        let matchesAtEndOfString = [...conditionRecord.matchAll(/(\.+\#+\.*)+$/g)]
-        for (let match of matchesAtEndOfString) {
-            console.log('match', match)
-            let newString: string = conditionRecord.substring(0, match.index)
-            console.log('length', match.length)
-            for (let i = 0; i < match.length; i++) {
-                groupOrder = groupOrder.split(',').pop() || ''
+        let matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
+        while (matchesAtEndOfString.length > 0) {
+            for (let match of matchesAtEndOfString) {
+                let newString: string = conditionRecord.substring(0, match.index)
+                conditionRecord = newString
+                groupOrderArray.pop()
+                if (LOGGING) console.log('conditionRecord', conditionRecord)
+                if (LOGGING) console.log('groupOrderArray', groupOrderArray)
             }
-            conditionRecord = newString
-            if (LOGGING) console.log('conditionRecord', conditionRecord)
-            if (LOGGING) console.log('groupOrder', groupOrder)
+            matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
         }
-
-        let matchesAtBeginningdOfString = [...conditionRecord.matchAll(/^(\.*\#+\.+)+/g)]
-        for (let match of matchesAtBeginningdOfString) {
-            console.log('match', match)
-            let newString: string = conditionRecord.substring(match.index || 0)
-            console.log('length', match.length)
-            for (let i = 0; i < match.length; i++) {
-                // TODO: Can't pop, need to remove from beginning
-                // Look into using slice to remove from beginning.  Probably need a temp string.
-                // groupOrder = groupOrder.split(',').pop() || ''
+        
+        let matchesAtBeginningdOfString = [...conditionRecord.matchAll(/^\.*\#+\.*/g)]
+        while (matchesAtBeginningdOfString.length > 0) {
+            for (let match of matchesAtBeginningdOfString) {
+                let newString: string = conditionRecord.substring(match[0].length)
+                conditionRecord = newString
+                let newArray = groupOrderArray.slice(1)
+                groupOrderArray = newArray
+                if (LOGGING) console.log('conditionRecord', conditionRecord)
+                if (LOGGING) console.log('groupOrderArray', groupOrderArray)
             }
-            conditionRecord = newString
-            if (LOGGING) console.log('conditionRecord', conditionRecord)
-            if (LOGGING) console.log('groupOrder', groupOrder)
+            matchesAtBeginningdOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
         }
-
 
         // Split the line based on "."s.  This will give the total number of sections to be solved
         
@@ -153,6 +154,7 @@ export async function solvePartTwo ( filename : string) {
         // // // If there were periods at the beginning, ignore from the count.
         let numberOfSections: number = 0
         for (let section of sectionsToBeSolved) {
+            console.log('section', section)
             numberOfSections++
         }
         for (let section of sectionsToBeSolved) {
@@ -161,11 +163,9 @@ export async function solvePartTwo ( filename : string) {
 
         // If there are the same number of sections to be solved as numbers in the groupOrder
         // there are periods between each section already so just loop through each section.
-        if (numberOfSections + 1 === groupOrder.length) {
+        if (numberOfSections + 1 === groupOrderArray.length) {
 
         }
-
-        // return 0
 
 
 
@@ -174,7 +174,7 @@ export async function solvePartTwo ( filename : string) {
         // Also create a RegEx to check if the full filled in line matches the "groupOrder" numbers
         let totalNumberOfDamagedSprings = 0
         let regexString = "^\\.*" // might start with periods
-        for (let number of groupOrder.split(',')) {
+        for (let number of groupOrderArray) {
             totalNumberOfDamagedSprings += Number(number)
             regexString += "\\#{" + number + "}\\.+"
         }
