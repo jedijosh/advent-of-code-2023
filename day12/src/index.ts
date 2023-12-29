@@ -1,7 +1,7 @@
 import { match } from 'assert'
 import { parseFileIntoArrayOfLines } from './utils'
 
-const LOGGING = false
+const LOGGING = true
 
 let combinationCache = {}
 
@@ -136,6 +136,10 @@ export function findCombinations(inputArray: Array<number> = [], availableValues
     // 5, 6, 10
 }
 
+export function findNumberOfCombinations(stringToTest: string, numberOfSprings: number) {
+    
+}
+
 
 export async function solution ( filename : string, copiesToAdd: number) {
     let possibleArrangements: number = 0
@@ -151,9 +155,9 @@ export async function solution ( filename : string, copiesToAdd: number) {
         if (LOGGING) console.log('groupOrder', groupOrder)
 
         let groupOrderArray: Array<number> = groupOrder.split(',').map(Number)
-        let result = removeMatchesFromEnd(conditionRecord, groupOrderArray)
-        conditionRecord = result.conditionRecord
-        groupOrderArray = result.groupOrderArray
+        // let result = removeMatchesFromEnd(conditionRecord, groupOrderArray)
+        // conditionRecord = result.conditionRecord
+        // groupOrderArray = result.groupOrderArray
 
         // result = removeMatchesFromBeginning(conditionRecord, groupOrderArray)
         // conditionRecord = result.conditionRecord
@@ -182,27 +186,35 @@ export async function solution ( filename : string, copiesToAdd: number) {
 
 
 
+
+
         
         // Split the line based on "."s.  This will give the total number of sections to be solved    
     
-        let sectionsToBeSolved = conditionRecord.matchAll(/\.+/g)
-        if (LOGGING) console.log('sectionsToBeSolved', sectionsToBeSolved)
+        let sectionsToSolve: Array<String> = []
+        let locationOfPeriods = conditionRecord.matchAll(/\.+/g)
+        if (LOGGING) console.log('locationOfPeriods', locationOfPeriods)
         // // // If there were periods at the beginning, ignore from the count.
         let numberOfSections: number = 0
-        for (let section of sectionsToBeSolved) {
-            if (LOGGING) console.log('section', section)
+        let startingPosition = 0
+        for (let periodLocation of locationOfPeriods) {
+            if (LOGGING) console.log('periodLocation', periodLocation)
+            sectionsToSolve.push(conditionRecord.substring(startingPosition, periodLocation.index))
+            startingPosition = periodLocation.index || 0 + 1
             numberOfSections++
         }
         if (LOGGING) console.log('numberOfSections', numberOfSections)
 
-        for (let section of sectionsToBeSolved) {
+        for (let section of sectionsToSolve) {
             if (LOGGING) console.log('section', section)
         }
 
         // If there are the same number of sections to be solved as numbers in the groupOrder
         // there are periods between each section already so just loop through each section.
-        if (numberOfSections + 1 === groupOrderArray.length) {
-
+        if (sectionsToSolve.length === groupOrderArray.length) {
+            for (let sectionNumber = 0; sectionNumber < sectionsToSolve.length; sectionNumber++) {
+                findNumberOfCombinations(sectionsToSolve[sectionNumber], groupOrderArray[sectionNumber])
+            }
         }
 
 
@@ -256,6 +268,6 @@ export async function solution ( filename : string, copiesToAdd: number) {
 // solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
     // .then(answer => console.log('answer:', answer))
 
-// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input3.txt', 4)
-solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt', 0)
+solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input3.txt', 4)
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt', 0)
         .then(answer => console.log('answer:', answer))
