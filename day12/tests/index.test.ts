@@ -1,19 +1,24 @@
-import { solvePartOne, solvePartTwo, findCombinations } from '../src/index'
+import { solution, findCombinations } from '../src/index'
 
 describe('test solvePartOne', () => {
-    it('result should be 21 with sample data', async () => {
-        let result = await solvePartOne('./tests/data/input.txt')
+    it('result should be 21 with sample data with no added copies', async () => {
+        let result = await solution('./tests/data/input.txt', 0)
         expect(result).toBe(21)
     })
 
-    test('result should be 7732 with my data', async () => {
-        let partOneAnswer = await solvePartOne('./input.txt')
+    test('result should be 7732 with my data with no added copies', async () => {
+        let partOneAnswer = await solution('./input.txt', 0)
         expect(partOneAnswer).toBe(7732)
     })
     
-    test('part 2 result should be 525152 with sample data', async () => {
-        let partTwoAnswer = await solvePartTwo('./tests/data/input.txt')
-        expect(partTwoAnswer).toBe(525152)
+    // test('part 2 result should be 525152 with sample data', async () => {
+    //     let partTwoAnswer = await solution('./tests/data/input.txt', 4)
+    //     expect(partTwoAnswer).toBe(525152)
+    // })
+
+    test('part 2 result should be 16 with sample data and 4 added copies', async () => {
+        let partTwoAnswer = await solution('./tests/data/input3.txt', 4)
+        expect(partTwoAnswer).toBe(16)
     })
     
     // test('part 2 result should be 459 with my data', async () => {

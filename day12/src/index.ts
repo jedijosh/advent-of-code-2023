@@ -1,7 +1,9 @@
 import { match } from 'assert'
 import { parseFileIntoArrayOfLines } from './utils'
 
-const LOGGING = true
+const LOGGING = false
+
+let combinationCache = {}
 
 export async function solvePartOne ( filename : string) {
     let possibleArrangements: number = 0
@@ -64,6 +66,47 @@ export async function solvePartOne ( filename : string) {
     return possibleArrangements
 }
 
+export function removeMatchesFromEnd(conditionRecord: string, groupOrderArray: Array<number>) {
+    let matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
+    while (matchesAtEndOfString.length > 0) {
+        for (let match of matchesAtEndOfString) {
+            let newString: string = conditionRecord.substring(0, match.index) + "."
+            conditionRecord = newString
+            groupOrderArray.pop()
+            if (LOGGING) console.log('conditionRecord', conditionRecord)
+            if (LOGGING) console.log('groupOrderArray', groupOrderArray)
+        }
+        matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
+    }
+    return { conditionRecord, groupOrderArray }
+}
+
+export function removeMatchesFromBeginning(conditionRecord: string, groupOrderArray: Array<number>) {
+    let matchesAtBeginningdOfString = [...conditionRecord.matchAll(/^\.+\#+\.+/g)]
+    while (matchesAtBeginningdOfString.length > 0) {
+        for (let match of matchesAtBeginningdOfString) {
+            let newString: string = "." + conditionRecord.substring(match[0].length)
+            conditionRecord = newString
+            let newArray = groupOrderArray.slice(1)
+            groupOrderArray = newArray
+            if (LOGGING) console.log('conditionRecord', conditionRecord)
+            if (LOGGING) console.log('groupOrderArray', groupOrderArray)
+        }
+        matchesAtBeginningdOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
+    }
+    return { conditionRecord, groupOrderArray }
+}
+
+export function buildRegex(groupOrderArray: Array<number>) {
+    let regexString = "^\\.*" // might start with periods
+    for (let number of groupOrderArray) {
+        regexString += "\\#{" + number + "}\\.+"
+    }
+    regexString = regexString.substring(0, regexString.length - 1) + '*$'
+    return new RegExp(regexString)
+    
+}
+
 // Inital call will pass in an empty array.
 // Build arrays with length 
 export function findCombinations(inputArray: Array<number> = [], availableValues: Array<number>, combinationLength: number): Array<Array<number>> {
@@ -94,7 +137,7 @@ export function findCombinations(inputArray: Array<number> = [], availableValues
 }
 
 
-export async function solvePartTwo ( filename : string) {
+export async function solution ( filename : string, copiesToAdd: number) {
     let possibleArrangements: number = 0
     let fileLines : String[] = await parseFileIntoArrayOfLines(filename)
     
@@ -107,50 +150,35 @@ export async function solvePartTwo ( filename : string) {
         if (LOGGING) console.log('conditionRecord', conditionRecord)
         if (LOGGING) console.log('groupOrder', groupOrder)
 
+        let groupOrderArray: Array<number> = groupOrder.split(',').map(Number)
+        let result = removeMatchesFromEnd(conditionRecord, groupOrderArray)
+        conditionRecord = result.conditionRecord
+        groupOrderArray = result.groupOrderArray
+
+        // result = removeMatchesFromBeginning(conditionRecord, groupOrderArray)
+        // conditionRecord = result.conditionRecord
+        // groupOrderArray = result.groupOrderArray
+
         let conditionRecordCopy = conditionRecord.substring(0)
-        let groupOrderCopy = groupOrder.substring(0)
-        for (let i = 0; i < 4; i++) {
+        let groupOrderCopy = groupOrderArray.slice(0)
+        for (let i = 0; i < copiesToAdd; i++) {
             let newString = conditionRecord.concat('?').concat(conditionRecordCopy)
             conditionRecord = newString
-            newString = groupOrder + ',' + groupOrderCopy
-            groupOrder = newString
+            let newArray = groupOrderArray.concat(groupOrderCopy)
+            groupOrderArray = newArray
         }
-        console.log('final conditionRecord', conditionRecord)
-        console.log('final groupOrder', groupOrder)
+        if (LOGGING) console.log('final conditionRecord', conditionRecord)
+        if (LOGGING) console.log('final groupOrderArray', groupOrderArray)
 
-        let groupOrderArray: Array<number> = groupOrder.split(',').map(Number)
+        
 
         // See if we can strip off any of the string from the beginning or the end
         // Look for one or more periods, one or more #, zero or more "." and then end of line
-        let matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
-        while (matchesAtEndOfString.length > 0) {
-            for (let match of matchesAtEndOfString) {
-                let newString: string = conditionRecord.substring(0, match.index)
-                conditionRecord = newString
-                groupOrderArray.pop()
-                if (LOGGING) console.log('conditionRecord', conditionRecord)
-                if (LOGGING) console.log('groupOrderArray', groupOrderArray)
-            }
-            matchesAtEndOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
-        }
-        
-        let matchesAtBeginningdOfString = [...conditionRecord.matchAll(/^\.*\#+\.*/g)]
-        while (matchesAtBeginningdOfString.length > 0) {
-            for (let match of matchesAtBeginningdOfString) {
-                let newString: string = conditionRecord.substring(match[0].length)
-                conditionRecord = newString
-                let newArray = groupOrderArray.slice(1)
-                groupOrderArray = newArray
-                if (LOGGING) console.log('conditionRecord', conditionRecord)
-                if (LOGGING) console.log('groupOrderArray', groupOrderArray)
-            }
-            matchesAtBeginningdOfString = [...conditionRecord.matchAll(/\.+\#+\.*$/g)]
-        }
 
         // See if there are any complete sections which can help break up the overall line
         // Look for one or more periods, one or more #s, and one or more periods
         let completeSections = [...conditionRecord.matchAll(/\.{1}\#+\.{1}/g)]
-        console.log('completeSections', completeSections)
+        if (LOGGING) console.log('completeSections', completeSections)
 
 
 
@@ -158,17 +186,17 @@ export async function solvePartTwo ( filename : string) {
         // Split the line based on "."s.  This will give the total number of sections to be solved    
     
         let sectionsToBeSolved = conditionRecord.matchAll(/\.+/g)
-        console.log('sectionsToBeSolved', sectionsToBeSolved)
+        if (LOGGING) console.log('sectionsToBeSolved', sectionsToBeSolved)
         // // // If there were periods at the beginning, ignore from the count.
         let numberOfSections: number = 0
         for (let section of sectionsToBeSolved) {
-            console.log('section', section)
+            if (LOGGING) console.log('section', section)
             numberOfSections++
         }
-        console.log('numberOfSections', numberOfSections)
+        if (LOGGING) console.log('numberOfSections', numberOfSections)
 
         for (let section of sectionsToBeSolved) {
-            console.log('section', section)
+            if (LOGGING) console.log('section', section)
         }
 
         // If there are the same number of sections to be solved as numbers in the groupOrder
@@ -182,14 +210,11 @@ export async function solvePartTwo ( filename : string) {
 
         // Calculate the total number of damaged springs for the line
         // Also create a RegEx to check if the full filled in line matches the "groupOrder" numbers
-        let totalNumberOfDamagedSprings = 0
-        let regexString = "^\\.*" // might start with periods
-        for (let number of groupOrderArray) {
-            totalNumberOfDamagedSprings += Number(number)
-            regexString += "\\#{" + number + "}\\.+"
-        }
-        regexString = regexString.substring(0, regexString.length - 1) + '*$'
-        let regexToMatch = new RegExp(regexString)
+        let totalNumberOfDamagedSprings = groupOrderArray.reduce(
+            (accumulator, currentValue) => accumulator + currentValue, 
+            0, 
+        )
+        let regexToMatch: RegExp = buildRegex(groupOrderArray)
 
         let numberOfKnownDamagedSprings = 0
         // Find the location of each damaged spring within the condition record.
@@ -201,13 +226,13 @@ export async function solvePartTwo ( filename : string) {
 
         // Find the positions of each unknown location in the full string
         let unknownLocations = conditionRecord.matchAll(/\?{1}/g) || []
-        let positionOfUnknownLocations: Array<number> = []
+        let positionsOfUnknownLocations: Array<number> = []
         for (let location of unknownLocations) {
-            if (location.index !== undefined) positionOfUnknownLocations.push(location.index)
+            if (location.index !== undefined) positionsOfUnknownLocations.push(location.index)
         }
         // if (LOGGING) console.log('positionOfUnknownLocations', positionOfUnknownLocations)        
 
-        let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionOfUnknownLocations, numberOfSpringsToFind)
+        let combinations: Array<Array<number>> = findCombinations(new Array<number>(), positionsOfUnknownLocations, numberOfSpringsToFind)
         // if (LOGGING) console.log('combinations', combinations)
 
         for (let combinationNumber = 0; combinationNumber < combinations.length; combinationNumber++) {
@@ -227,10 +252,10 @@ export async function solvePartTwo ( filename : string) {
 
 
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
     // .then(answer => console.log('answer:', answer))
 
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input3.txt', 4)
+solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt', 0)
         .then(answer => console.log('answer:', answer))
