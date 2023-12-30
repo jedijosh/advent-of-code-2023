@@ -21,9 +21,9 @@ describe('test solvePartOne', () => {
         expect(partTwoAnswer).toBe(16)
     })
     
-    // test('part 2 result should be 459 with my data', async () => {
+    // test('part 2 result should be 4500070301581 with my data', async () => {
     //     let partTwoAnswer = await solvePartTwo('./input.txt')
-    //     expect(partTwoAnswer).toBe(459)
+    //     expect(partTwoAnswer).toBe(4500070301581)
     // })
 })
 
