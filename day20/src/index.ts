@@ -62,7 +62,7 @@ class ConjunctionModule extends Module {
         this.connectedModules.set(source, pulseType)
         let allHighPulses = true
         for (let connectedModule of this.connectedModules) {
-            if (!connectedModule) allHighPulses = false
+            if (!connectedModule[1]) allHighPulses = false
             break
         }
         if (allHighPulses) {
@@ -149,13 +149,13 @@ export async function solvePartOne ( filename : string) {
         // Here at Desert Machine Headquarters, there is a module with a single button on it called, aptly, the button module. 
         // When you push the button, a single low pulse is sent directly to the broadcaster module.
         pulseArray.push({destination: 'broadcaster', source: 'button', pulseType: false})
+        lowPulsesSent++
         while(pulseArray.length > 0) {
             let currentPulse = pulseArray.shift()
             // console.log('currentPulse', currentPulse)
             if (!currentPulse) continue
             let currentModule = modules.get(currentPulse.destination)
             if (currentModule) {
-                console.log(typeof currentModule)
                 let result = currentModule.processPulse(currentPulse.pulseType, currentPulse.source, pulseArray)
                 lowPulsesSent += result.lowPulsesSent
                 highPulsesSent += result.highPulsesSent
@@ -175,7 +175,7 @@ export async function solvePartTwo ( filename : string) {
 
 }
 
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input.txt')
+solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input2.txt')
 // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
     .then(answer => console.log('answer:', answer))
 
