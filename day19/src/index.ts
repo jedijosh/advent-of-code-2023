@@ -122,34 +122,40 @@ export async function solvePartTwo ( filename : string) {
     // If nextStep is 'A', keep track of how you got there
     // Perhaps track the min and max of each xmas value as you go to the next step?
     // let paths: Array<{currentWorkflow: string, visitedWorkflows: Array<string>}> = new Array()
-    let paths: Array<{currentWorkflow: string, visitedWorkflows: Array<string>, possibleValues: Map<string, {min: number, max: number}>}> = new Array()
+    let paths: Array<{currentWorkflow: string, ruleNumber: number, visitedWorkflows: Array<string>, possibleValues: Map<string, {min: number, max: number}>}> = new Array()
     let acceptedPaths: Array<string> = new Array()
     let beginningMap: Map<string, {min: number, max: number}> = new Map()
     beginningMap.set('x', {min: 1, max: 4000})
     beginningMap.set('m', {min: 1, max: 4000})
     beginningMap.set('a', {min: 1, max: 4000})
     beginningMap.set('s', {min: 1, max: 4000})
-    paths.push({currentWorkflow: 'in', visitedWorkflows: [], possibleValues: beginningMap})
+    paths.push({currentWorkflow: 'in', ruleNumber: 0, visitedWorkflows: [], possibleValues: beginningMap})
     while(paths.length > 0) {
         let currentPath = paths.shift()
         if (!currentPath) break
         let currentWorkflow = workflows.get(currentPath.currentWorkflow)
         if (!currentWorkflow) break
-        for (let workflowRuleNumber = 0; workflowRuleNumber < currentWorkflow.length || 0; workflowRuleNumber++) {
-            // There is an issue in here where rules evaluating to false aren't adjusting the min/max
-            // Track workflow rule number instead of looping?
-            // If the first condition evaluates to true, it shouldn't continue in this loop
-            
-            let workflowRule = currentWorkflow[workflowRuleNumber]
-            console.log('workflowRule', workflowRule)
-            // Add one path where this step evaluates to true
-            let currentPathTrueCopy = {...currentPath}
-            currentPathTrueCopy.possibleValues = new Map(currentPath.possibleValues)
-            let currentPathFalseCopy = {...currentPath}
-            currentPathFalseCopy.possibleValues = new Map(currentPath.possibleValues)
+        
+        let workflowRule = currentWorkflow[currentPath.ruleNumber]
+        console.log('--------------------------')
+        console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}.`)
+        console.log('workflowRule', workflowRule)
+        // Add one path where this step evaluates to true
+        let currentPathTrueCopy = {...currentPath}
+        currentPathTrueCopy.possibleValues = new Map(currentPath.possibleValues)
+        let currentPathFalseCopy = {...currentPath}
+        currentPathFalseCopy.possibleValues = new Map(currentPath.possibleValues)
 
-            let currentMinValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.min
-            let currentMaxValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.max
+        let currentMinValue
+        let currentMaxValue
+        let newVisitedArray
+
+        if (workflowRule.nextStep === 'R' || currentPathTrueCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
+            // Path leads to rejection or has already been visited
+            
+        } else {
+            currentMinValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.min
+            currentMaxValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.max
             if (!currentMaxValue) break  
             if (!currentMinValue) break
             
@@ -167,13 +173,9 @@ export async function solvePartTwo ( filename : string) {
             }
             console.log(currentPathTrueCopy.possibleValues)
             
-            let newVisitedArray = currentPathTrueCopy.visitedWorkflows.slice()
-            newVisitedArray.push(currentPathTrueCopy.currentWorkflow)
+            newVisitedArray = currentPathTrueCopy.visitedWorkflows.slice()
+            newVisitedArray.push(currentPathTrueCopy.currentWorkflow + currentPathTrueCopy.ruleNumber)
 
-            if (workflowRule.nextStep === 'R' || currentPathTrueCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
-                // Path leads to rejection or has already been visited
-                break
-            }
             if (workflowRule.nextStep === 'A' && !acceptedPaths.includes(newVisitedArray.flat().toString())) {
                 acceptedPaths.push(newVisitedArray.flat().toString())
                 console.log('accepted paths', acceptedPaths)
@@ -186,18 +188,28 @@ export async function solvePartTwo ( filename : string) {
                     pathCombinations *= (value.max - value.min + 1)
                 })
                 numberOfCombinations += pathCombinations
-                
+            } else {
+                console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to ${workflowRule.nextStep}`)
+                paths.push({currentWorkflow: workflowRule.nextStep, ruleNumber: 0, visitedWorkflows: newVisitedArray, possibleValues: currentPathTrueCopy.possibleValues})
             }
-            paths.push({currentWorkflow: workflowRule.nextStep, visitedWorkflows: newVisitedArray, possibleValues: currentPathTrueCopy.possibleValues})
+            console.log(paths)
+        }
+
+        
+        
 
 
 
-            
-            // Add another path where it evaluates to false
+        
+        // Add another path where it evaluates to false
+        if (workflowRule.nextStep === 'R' || currentPathFalseCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
+            // Path leads to rejection or has already been visited
+        } else {
             currentMinValue = currentPathFalseCopy.possibleValues.get(workflowRule.comparison.property)?.min
             currentMaxValue = currentPathFalseCopy.possibleValues.get(workflowRule.comparison.property)?.max
             if (!currentMaxValue) break  
             if (!currentMinValue) break
+
             switch(workflowRule.comparison.operator) {
                 case '<':
                     console.log('False path - adjusting min')
@@ -212,12 +224,8 @@ export async function solvePartTwo ( filename : string) {
             console.log(currentPathFalseCopy.possibleValues)
 
             newVisitedArray = currentPathFalseCopy.visitedWorkflows.slice()
-            newVisitedArray.push(currentPathFalseCopy.currentWorkflow)
+            newVisitedArray.push(currentPathFalseCopy.currentWorkflow + currentPathFalseCopy.ruleNumber)
 
-            if (workflowRule.nextStep === 'R' || currentPathFalseCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
-                // Path leads to rejection or has already been visited
-                break
-            }
             if (workflowRule.nextStep === 'A' && !acceptedPaths.includes(newVisitedArray.flat().toString())) {
                 // Path leads to acceptance.  Figure out which combinations can get you there
                 acceptedPaths.push(newVisitedArray.flat().toString())
@@ -229,13 +237,17 @@ export async function solvePartTwo ( filename : string) {
                     console.log('value', value)
                     pathCombinations *= (value.max - value.min + 1)
                 })
-                numberOfCombinations += pathCombinations
-                
+                numberOfCombinations += pathCombinations 
+            } else {
+                console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to next rule number ${currentPath.ruleNumber + 1}`)
+                console.log(paths)
+                if (currentPath.ruleNumber < currentWorkflow.length - 1) {
+                    paths.push({currentWorkflow: currentPath.currentWorkflow, ruleNumber: currentPath.ruleNumber + 1, visitedWorkflows: newVisitedArray, possibleValues: currentPathFalseCopy.possibleValues})
+                }
             }
-            
-            // paths.push({currentWorkflow: workflowRule.nextStep, visitedWorkflows: newVisitedArray, possibleValues: currentPathFalseCopy.possibleValues})
-            
         }
+
+            
     }
 
 
