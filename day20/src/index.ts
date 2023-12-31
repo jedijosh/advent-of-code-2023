@@ -144,18 +144,18 @@ export async function solvePartOne ( filename : string) {
     modules.forEach((module) => { 
         for (let destination of module.destinationModules) {
             // If the destination is listed in the conjunction modules list, add this as a connected module to it.
-            console.log(`destination ${destination}, result: ${conjunctionModules.indexOf(destination)}`)
+            // console.log(`destination ${destination}, result: ${conjunctionModules.indexOf(destination)}`)
             if (conjunctionModules.indexOf(destination) !== -1) {
-                console.log('destination is a conjunction module')
-                console.log(Object.prototype.toString.call(modules.get(destination)))
-                if(Object.prototype.toString.call(destination) === 'ConjunctionModule') {
-                    let conjunctionModule = modules.get(destination)
-                    console.log('conjunctionModule', conjunctionModule)
-                    if (conjunctionModule) {
-                        console.log('in if')
-                        conjunctionModule.connectedModules.set(module.name, false)
-                    }
+                // TODO: Figure out how to get this to work
+                let conjunctionModule = modules.get(destination)
+                // console.log('conjunctionModule', conjunctionModule)
+                if (conjunctionModule) {
+                    // console.log('in if')
+                    conjunctionModule.connectedModules.set(module.name, false)
                 }
+                // if(Object.prototype.toString.call(destination) === 'ConjunctionModule') {
+                    
+                // }
                 
             }
         }
