@@ -137,9 +137,9 @@ export async function solvePartTwo ( filename : string) {
         if (!currentWorkflow) break
         
         let workflowRule = currentWorkflow[currentPath.ruleNumber]
-        console.log('--------------------------')
-        console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}.`)
-        console.log('workflowRule', workflowRule)
+        if (LOGGING) console.log('--------------------------')
+        if (LOGGING) console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}.`)
+        if (LOGGING) console.log('workflowRule', workflowRule)
         // Add one path where this step evaluates to true
         let currentPathTrueCopy = {...currentPath}
         currentPathTrueCopy.possibleValues = new Map(currentPath.possibleValues)
@@ -149,6 +149,7 @@ export async function solvePartTwo ( filename : string) {
         if (workflowRule.nextStep === 'R' || currentPathTrueCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
             // Path leads to rejection or has already been visited
         } else {
+            // Adjust the min or max for the value being compared for the next step
             let currentMinValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.min
             let currentMaxValue = currentPathTrueCopy.possibleValues.get(workflowRule.comparison.property)?.max
             if (!currentMaxValue) break
@@ -158,37 +159,37 @@ export async function solvePartTwo ( filename : string) {
             if (workflowRule.comparison.numberToCompare !== 0) {
                 switch(workflowRule.comparison.operator) {
                     case '<':
-                        console.log('True path - adjusting max')
+                        if (LOGGING) console.log('True path - adjusting max')
                         currentPathTrueCopy.possibleValues.set(workflowRule.comparison.property, {min: currentMinValue, max: Math.min(currentMaxValue, workflowRule.comparison.numberToCompare - 1)})
                         break
                     default:
-                        console.log('True path - adjusting min')
+                        if (LOGGING) console.log('True path - adjusting min')
                         currentPathTrueCopy.possibleValues.set(workflowRule.comparison.property, {min: Math.max(currentMinValue, workflowRule.comparison.numberToCompare + 1) , max: currentMaxValue})
                 }
             }
-            console.log(currentPathTrueCopy.possibleValues)
+            if (LOGGING) console.log(currentPathTrueCopy.possibleValues)
             
             let newVisitedArray = currentPathTrueCopy.visitedWorkflows.slice()
             newVisitedArray.push(currentPathTrueCopy.currentWorkflow + currentPathTrueCopy.ruleNumber)
 
             if (workflowRule.nextStep === 'A' && !acceptedPaths.includes(newVisitedArray.flat().toString())) {
                 acceptedPaths.push(newVisitedArray.flat().toString())
-                console.log('accepted paths', acceptedPaths)
-                console.log('path', currentPathTrueCopy.visitedWorkflows)
-                console.log('current workflow', currentPathTrueCopy.currentWorkflow)
+                if (LOGGING) console.log('accepted paths', acceptedPaths)
+                if (LOGGING) console.log('path', currentPathTrueCopy.visitedWorkflows)
+                if (LOGGING) console.log('current workflow', currentPathTrueCopy.currentWorkflow)
                 // Path leads to acceptance.  Figure out which combinations can get you there
                 let pathCombinations: number = 1
                 currentPathTrueCopy.possibleValues.forEach(value => {
-                    console.log('value', value)
+                    if (LOGGING) console.log('value', value)
                     pathCombinations *= (value.max - value.min + 1)
                 })
                 numberOfCombinations += pathCombinations
-                console.log(`***** Path ${newVisitedArray.flat().toString()} has ${pathCombinations} combinations`)
+                if (LOGGING) console.log(`***** Path ${newVisitedArray.flat().toString()} has ${pathCombinations} combinations`)
             } else {
-                console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to ${workflowRule.nextStep}`)
+                if (LOGGING) console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to ${workflowRule.nextStep}`)
                 paths.push({currentWorkflow: workflowRule.nextStep, ruleNumber: 0, visitedWorkflows: newVisitedArray, possibleValues: currentPathTrueCopy.possibleValues})
             }
-            console.log(paths)
+            if (LOGGING) console.log(paths)
         }
 
         
@@ -198,8 +199,9 @@ export async function solvePartTwo ( filename : string) {
 
         
         // Add another path where it evaluates to false
-        if (workflowRule.nextStep === 'R' || currentPathFalseCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
-            // Path leads to rejection or has already been visited
+        if (currentPathFalseCopy.visitedWorkflows.includes(workflowRule.nextStep)) {
+            // Don't care about next step because this is the falsey path
+            // Path has already been visited
         } else {
             let currentMinValue = currentPathFalseCopy.possibleValues.get(workflowRule.comparison.property)?.min
             let currentMaxValue = currentPathFalseCopy.possibleValues.get(workflowRule.comparison.property)?.max
@@ -209,16 +211,16 @@ export async function solvePartTwo ( filename : string) {
             if (workflowRule.comparison.numberToCompare !== 0) {
                 switch(workflowRule.comparison.operator) {
                     case '<':
-                        console.log('False path - adjusting min')
+                        if (LOGGING) console.log('False path - adjusting min')
                         currentPathFalseCopy.possibleValues.set(workflowRule.comparison.property, {min: Math.max(currentMinValue, workflowRule.comparison.numberToCompare) , max: currentMaxValue})    
                         currentPath.possibleValues.set(workflowRule.comparison.property, {min: Math.max(currentMinValue, workflowRule.comparison.numberToCompare) , max: currentMaxValue})    
                         break
                     default:
-                        console.log('False path - adjusting max')
+                        if (LOGGING) console.log('False path - adjusting max')
                         currentPathFalseCopy.possibleValues.set(workflowRule.comparison.property, {min: currentMinValue, max: Math.min(currentMaxValue, workflowRule.comparison.numberToCompare)})
                         currentPath.possibleValues.set(workflowRule.comparison.property, {min: currentMinValue, max: Math.min(currentMaxValue, workflowRule.comparison.numberToCompare)})
                 }
-                console.log(currentPathFalseCopy.possibleValues)
+                if (LOGGING) console.log(currentPathFalseCopy.possibleValues)
             }
             
 
@@ -228,19 +230,19 @@ export async function solvePartTwo ( filename : string) {
             if (workflowRule.nextStep === 'A' && !acceptedPaths.includes(newVisitedArray.flat().toString())) {
                 // Path leads to acceptance.  Figure out which combinations can get you there
                 acceptedPaths.push(newVisitedArray.flat().toString())
-                console.log('accepted paths', acceptedPaths)
-                console.log('path', currentPathFalseCopy.visitedWorkflows)
-                console.log('current workflow', currentPathFalseCopy.currentWorkflow)
+                if (LOGGING) console.log('accepted paths', acceptedPaths)
+                if (LOGGING) console.log('path', currentPathFalseCopy.visitedWorkflows)
+                if (LOGGING) console.log('current workflow', currentPathFalseCopy.currentWorkflow)
                 let pathCombinations: number = 1
                 currentPathFalseCopy.possibleValues.forEach(value => {
                     console.log('value', value)
                     pathCombinations *= (value.max - value.min + 1)
                 })
-                console.log(`***** Path ${newVisitedArray.flat().toString()} has ${pathCombinations} combinations`)
+                if (LOGGING) console.log(`***** Path ${newVisitedArray.flat().toString()} has ${pathCombinations} combinations`)
                 numberOfCombinations += pathCombinations 
             } else {
-                console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to next rule number ${currentPath.ruleNumber + 1}`)
-                console.log(paths)
+                if (LOGGING) console.log(`at ${currentPath.currentWorkflow}, # ${currentPath.ruleNumber}. Going to next rule number ${currentPath.ruleNumber + 1}`)
+                if (LOGGING) console.log(paths)
                 if (currentPath.ruleNumber < currentWorkflow.length - 1) {
                     paths.push({currentWorkflow: currentPath.currentWorkflow, ruleNumber: currentPath.ruleNumber + 1, visitedWorkflows: newVisitedArray, possibleValues: currentPathFalseCopy.possibleValues})
                 }
@@ -299,6 +301,6 @@ export async function solvePartTwo ( filename : string) {
 // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/input.txt')
     // .then(answer => console.log('answer:', answer))
 
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/tests/data/input.txt')
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/input.txt')
+// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/tests/data/input.txt')
+solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/input.txt')
 .then(answer => console.log('answer:', answer))
