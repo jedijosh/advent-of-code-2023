@@ -138,11 +138,11 @@ export async function solvePartTwo ( filename : string) {
         for (let workflowRuleNumber = 0; workflowRuleNumber < currentWorkflow.length || 0; workflowRuleNumber++) {
             // There is an issue in here where rules evaluating to false aren't adjusting the min/max
             // Track workflow rule number instead of looping?
+            // If the first condition evaluates to true, it shouldn't continue in this loop
             
             let workflowRule = currentWorkflow[workflowRuleNumber]
             console.log('workflowRule', workflowRule)
             // Add one path where this step evaluates to true
-
             let currentPathTrueCopy = {...currentPath}
             currentPathTrueCopy.possibleValues = new Map(currentPath.possibleValues)
             let currentPathFalseCopy = {...currentPath}
@@ -202,10 +202,12 @@ export async function solvePartTwo ( filename : string) {
                 case '<':
                     console.log('False path - adjusting min')
                     currentPathFalseCopy.possibleValues.set(workflowRule.comparison.property, {min: Math.max(currentMinValue, workflowRule.comparison.numberToCompare) , max: currentMaxValue})    
+                    currentPath.possibleValues.set(workflowRule.comparison.property, {min: Math.max(currentMinValue, workflowRule.comparison.numberToCompare) , max: currentMaxValue})    
                     break
                 default:
                     console.log('False path - adjusting max')
                     currentPathFalseCopy.possibleValues.set(workflowRule.comparison.property, {min: currentMinValue, max: Math.min(currentMaxValue, workflowRule.comparison.numberToCompare)})
+                    currentPath.possibleValues.set(workflowRule.comparison.property, {min: currentMinValue, max: Math.min(currentMaxValue, workflowRule.comparison.numberToCompare)})
             }
             console.log(currentPathFalseCopy.possibleValues)
 
@@ -231,7 +233,7 @@ export async function solvePartTwo ( filename : string) {
                 
             }
             
-            paths.push({currentWorkflow: workflowRule.nextStep, visitedWorkflows: newVisitedArray, possibleValues: currentPathFalseCopy.possibleValues})
+            // paths.push({currentWorkflow: workflowRule.nextStep, visitedWorkflows: newVisitedArray, possibleValues: currentPathFalseCopy.possibleValues})
             
         }
     }
