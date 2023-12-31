@@ -4,11 +4,13 @@ import { parseFileIntoArrayOfLines } from './utils'
 const LOGGING = false
 
 class Module {
+    connectedModules: Map<string, boolean>
     destinationModules: Array<string>
     name: string
-    constructor(name: string, destinationModules: Array<string>) {
+    constructor(name: string, destinationModules: Array<string>, connectedModules: Map<string, boolean> = new Map()) {
         this.name = name
         this.destinationModules = destinationModules
+        this.connectedModules = connectedModules
     }
 }
 
@@ -48,10 +50,8 @@ class FlipFlopModule extends Module {
 // When a pulse is received, the conjunction module first updates its memory for that input. 
 // Then, if it remembers high pulses for all inputs, it sends a low pulse; otherwise, it sends a high pulse.
 class ConjunctionModule extends Module {
-    connectedModules: Map<string, boolean>
     constructor(name: string, destinationModules: Array<string>) {
        super(name, destinationModules) 
-       this.connectedModules = new Map()
     }
 
     public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>) : {lowPulsesSent: number, highPulsesSent: number} {
@@ -80,6 +80,7 @@ class ConjunctionModule extends Module {
                 highPulsesSent++
             }
         }
+        console.log(`high: ${highPulsesSent}, low: ${lowPulsesSent}`)
         return { lowPulsesSent, highPulsesSent }
     }
 }
@@ -99,7 +100,6 @@ class BroadcastModule extends Module {
             pulseArray.push({destination: destination, source: this.name, pulseType})
             pulseType ? highPulsesSent++ : lowPulsesSent++
         }
-        console.log(`high: ${highPulsesSent}, low: ${lowPulsesSent}`)
         return { lowPulsesSent, highPulsesSent }
     }
 }
@@ -116,6 +116,7 @@ export async function solvePartOne ( filename : string) {
     let pulseArray: Array<{destination: string, source: string, pulseType: boolean}> = new Array()
     let modules: Map<string, BroadcastModule | ConjunctionModule | FlipFlopModule> = new Map()
 
+    let conjunctionModules: Array<string> = []
     for (let line of fileLines) {
         let splitString = line.replace(/ /g, '').split('->')
         let destinationModules = splitString[1].split(',')
@@ -132,15 +133,33 @@ export async function solvePartOne ( filename : string) {
                 default:
                     console.log(`using default case for ${splitString}`)
                     modules.set(splitString[0].substring(1), new ConjunctionModule(splitString[0].substring(1), destinationModules))
+                    conjunctionModules.push(splitString[0].substring(1))
                     break
             }
         }
     }
     
     // TODO: Set initial state of conjunction modules
-    // for (let module of modules) {
-    //     for (let destination of )
-    // }
+    console.log(conjunctionModules)
+    modules.forEach((module) => { 
+        for (let destination of module.destinationModules) {
+            // If the destination is listed in the conjunction modules list, add this as a connected module to it.
+            console.log(`destination ${destination}, result: ${conjunctionModules.indexOf(destination)}`)
+            if (conjunctionModules.indexOf(destination) !== -1) {
+                console.log('destination is a conjunction module')
+                console.log(Object.prototype.toString.call(modules.get(destination)))
+                if(Object.prototype.toString.call(destination) === 'ConjunctionModule') {
+                    let conjunctionModule = modules.get(destination)
+                    console.log('conjunctionModule', conjunctionModule)
+                    if (conjunctionModule) {
+                        console.log('in if')
+                        conjunctionModule.connectedModules.set(module.name, false)
+                    }
+                }
+                
+            }
+        }
+    })
     console.log('modules', modules)
 
     // remember the initial state and check if we loop back to it?
