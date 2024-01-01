@@ -29,7 +29,7 @@ class FlipFlopModule extends Module {
         let lowPulsesSent = 0
         let highPulsesSent = 0
 
-        if (LOGGING) console.log('Overridden, Processing pulse of type ' + pulseType)
+        if (LOGGING) console.log(`${this.name} Processing pulse of type ${pulseType}`)
         // If receives a low pulse, flip between on and off
         if (!pulseType) {
             // If was on, send a low pulse.  If was off, send a high pulse.
@@ -55,32 +55,37 @@ class ConjunctionModule extends Module {
     }
 
     public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>) : {lowPulsesSent: number, highPulsesSent: number} {
-        if (LOGGING) console.log('Overridden, Processing pulse of type ' + pulseType)
+        if (LOGGING) console.log(`${this.name} Processing pulse of type ${pulseType}`)
+        if (LOGGING) console.log('connectedModules', this.connectedModules)
         let lowPulsesSent = 0
         let highPulsesSent = 0
         // Need to know which module sent this pulse
         this.connectedModules.set(source, pulseType)
         let allHighPulses = true
-        for (let connectedModule of this.connectedModules) {
-            if (!connectedModule[1]) allHighPulses = false
-            break
-        }
+        this.connectedModules.forEach((value, key) => {
+            if (!value) allHighPulses = false
+        })
+        // for (let connectedModule of this.connectedModules) {
+        //     console.log('connectedModule', connectedModule)
+        //     if (!connectedModule[1]) allHighPulses = false
+        //     break
+        // }
         if (allHighPulses) {
             // Send low pulse
-            console.log('Conjunction module is sending low pulse')
+            if (LOGGING) console.log(`Conjunction module ${this.name} is sending low pulse`)
             for (let destination of this.destinationModules) {
                 pulseArray.push({destination: destination, source: this.name, pulseType: false})
                 lowPulsesSent++
             }
         } else {
             // Send high pulse
-            console.log('Conjunction module is sending high pulse')
+            if (LOGGING) console.log(`Conjunction module ${this.name} is sending high pulse`)
             for (let destination of this.destinationModules) {
                 pulseArray.push({destination: destination, source: this.name, pulseType: true})
                 highPulsesSent++
             }
         }
-        console.log(`high: ${highPulsesSent}, low: ${lowPulsesSent}`)
+        if (LOGGING) console.log(`high: ${highPulsesSent}, low: ${lowPulsesSent}`)
         return { lowPulsesSent, highPulsesSent }
     }
 }
@@ -95,7 +100,7 @@ class BroadcastModule extends Module {
         let lowPulsesSent = 0
         let highPulsesSent = 0
 
-        if (LOGGING) console.log('Overridden, Processing pulse of type ' + pulseType)
+        if (LOGGING) console.log(`${this.name} Processing pulse of type ${pulseType}`)
         for (let destination of this.destinationModules) {
             pulseArray.push({destination: destination, source: this.name, pulseType})
             pulseType ? highPulsesSent++ : lowPulsesSent++
@@ -131,7 +136,7 @@ export async function solvePartOne ( filename : string) {
                     modules.set(splitString[0].substring(1), new FlipFlopModule(splitString[0].substring(1), destinationModules))
                     break
                 default:
-                    console.log(`using default case for ${splitString}`)
+                    if (LOGGING) console.log(`using default case for ${splitString}`)
                     modules.set(splitString[0].substring(1), new ConjunctionModule(splitString[0].substring(1), destinationModules))
                     conjunctionModules.push(splitString[0].substring(1))
                     break
@@ -181,6 +186,7 @@ export async function solvePartOne ( filename : string) {
             }
         } 
     }
+    console.log('modules', modules)
     console.log('lowPulsesSent', lowPulsesSent)
     console.log('highPulsesSent', highPulsesSent)
     return lowPulsesSent * highPulsesSent
@@ -194,8 +200,8 @@ export async function solvePartTwo ( filename : string) {
 
 }
 
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input2.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
+// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input2.txt')
+solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
     .then(answer => console.log('answer:', answer))
 
 // solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input.txt')
