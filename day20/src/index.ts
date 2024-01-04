@@ -1,7 +1,10 @@
 
-import { parseFileIntoArrayOfLines } from './utils'
+import { parseFileIntoArrayOfLines, findLowestCommonMultiple } from './utils'
 
 const LOGGING = false
+
+let highPulsesSentFromConjunction: Map<string, Array<number>> = new Map()
+let all4HaveSentHigh = false
 
 class Module {
     connectedModules: Map<string, boolean>
@@ -25,7 +28,7 @@ class FlipFlopModule extends Module {
         this.state = false
     }
 
-    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>) : {lowPulsesSent: number, highPulsesSent: number} {
+    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>, numberOfButtonPushes: number) : {lowPulsesSent: number, highPulsesSent: number} {
         let lowPulsesSent = 0
         let highPulsesSent = 0
 
@@ -54,7 +57,7 @@ class ConjunctionModule extends Module {
        super(name, destinationModules) 
     }
 
-    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>) : {lowPulsesSent: number, highPulsesSent: number} {
+    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>, numberOfButtonPushes: number) : {lowPulsesSent: number, highPulsesSent: number} {
         if (LOGGING) console.log(`${this.name} Processing pulse of type ${pulseType}`)
         if (LOGGING) console.log('connectedModules', this.connectedModules)
         let lowPulsesSent = 0
@@ -78,7 +81,26 @@ class ConjunctionModule extends Module {
                 lowPulsesSent++
             }
         } else {
+            if (this.name === 'fm' || this.name === 'dk' || this.name === 'fg' || this.name === 'pq') {
+                let highPulseArray: Array<number> = highPulsesSentFromConjunction.get(this.name) || []
+                highPulseArray.push(numberOfButtonPushes)
+                highPulsesSentFromConjunction.set(this.name, highPulseArray)
+    
+                let highPulseFM = highPulsesSentFromConjunction.get('fm') || []
+                let highPulseDK = highPulsesSentFromConjunction.get('dk') || []
+                let highPulseFQ = highPulsesSentFromConjunction.get('fg') || []
+                let highPulsePQ = highPulsesSentFromConjunction.get('pq') || []
+                const NUMBER_OF_OCCURENCES = 3
+                if (highPulseFM.length >= NUMBER_OF_OCCURENCES && highPulseDK.length >= NUMBER_OF_OCCURENCES 
+                    && highPulseFQ.length >= NUMBER_OF_OCCURENCES && highPulsePQ.length >= NUMBER_OF_OCCURENCES) {
+                        all4HaveSentHigh = true
+                    }
+            }
+            
+
+
             // Send high pulse
+            // Track when the 4 send a high
             if (LOGGING) console.log(`Conjunction module ${this.name} is sending high pulse`)
             for (let destination of this.destinationModules) {
                 pulseArray.push({destination: destination, source: this.name, pulseType: true})
@@ -96,7 +118,7 @@ class BroadcastModule extends Module {
        super(name, destinationModules) 
     }
 
-    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>) : {lowPulsesSent: number, highPulsesSent: number}  {
+    public processPulse(pulseType: boolean, source: string, pulseArray: Array<{destination: string, source: string, pulseType: boolean}>, numberOfButtonPushes: number) : {lowPulsesSent: number, highPulsesSent: number}  {
         let lowPulsesSent = 0
         let highPulsesSent = 0
 
@@ -144,23 +166,17 @@ export async function solvePartOne ( filename : string) {
         }
     }
     
-    // TODO: Set initial state of conjunction modules
+    // Set initial state of conjunction modules
     console.log(conjunctionModules)
     modules.forEach((module) => { 
         for (let destination of module.destinationModules) {
             // If the destination is listed in the conjunction modules list, add this as a connected module to it.
             // console.log(`destination ${destination}, result: ${conjunctionModules.indexOf(destination)}`)
             if (conjunctionModules.indexOf(destination) !== -1) {
-                // TODO: Figure out how to get this to work
                 let conjunctionModule = modules.get(destination)
-                // console.log('conjunctionModule', conjunctionModule)
                 if (conjunctionModule) {
-                    // console.log('in if')
                     conjunctionModule.connectedModules.set(module.name, false)
                 }
-                // if(Object.prototype.toString.call(destination) === 'ConjunctionModule') {
-                    
-                // }
                 
             }
         }
@@ -180,7 +196,7 @@ export async function solvePartOne ( filename : string) {
             if (!currentPulse) continue
             let currentModule = modules.get(currentPulse.destination)
             if (currentModule) {
-                let result = currentModule.processPulse(currentPulse.pulseType, currentPulse.source, pulseArray)
+                let result = currentModule.processPulse(currentPulse.pulseType, currentPulse.source, pulseArray, numberOfButtonPushes)
                 lowPulsesSent += result.lowPulsesSent
                 highPulsesSent += result.highPulsesSent
             }
@@ -195,15 +211,109 @@ export async function solvePartOne ( filename : string) {
 
 export async function solvePartTwo ( filename : string) {
     let fileLines : String[] = await parseFileIntoArrayOfLines(filename)
-    let numberOfCombinations: number = 0
-    return numberOfCombinations
+
+    let lowPulsesSent: number = 0
+    let highPulsesSent: number = 0
+
+    // Array to track pulses which need to be processed.  Store the destination and pulse frequency.
+    // pulseType = false is low pulse, pulseType = true is high pulse
+    let pulseArray: Array<{destination: string, source: string, pulseType: boolean}> = new Array()
+    let modules: Map<string, BroadcastModule | ConjunctionModule | FlipFlopModule> = new Map()
+
+    let conjunctionModules: Array<string> = []
+    for (let line of fileLines) {
+        let splitString = line.replace(/ /g, '').split('->')
+        let destinationModules = splitString[1].split(',')
+        if (splitString[0] === 'broadcaster') {
+            // Handle broadcaster
+            modules.set(splitString[0], new BroadcastModule(splitString[0], destinationModules))
+        } else {
+            // Find prefix
+            let prefix = splitString[0].substring(0,1)
+            switch (prefix) {
+                case '%':
+                    modules.set(splitString[0].substring(1), new FlipFlopModule(splitString[0].substring(1), destinationModules))
+                    break
+                default:
+                    if (LOGGING) console.log(`using default case for ${splitString}`)
+                    modules.set(splitString[0].substring(1), new ConjunctionModule(splitString[0].substring(1), destinationModules))
+                    conjunctionModules.push(splitString[0].substring(1))
+                    break
+            }
+        }
+    }
+    
+    // Set initial state of conjunction modules
+    console.log(conjunctionModules)
+    modules.forEach((module) => { 
+        for (let destination of module.destinationModules) {
+            // If the destination is listed in the conjunction modules list, add this as a connected module to it.
+            // console.log(`destination ${destination}, result: ${conjunctionModules.indexOf(destination)}`)
+            if (conjunctionModules.indexOf(destination) !== -1) {
+                let conjunctionModule = modules.get(destination)
+                if (conjunctionModule) {
+                    conjunctionModule.connectedModules.set(module.name, false)
+                }
+                
+            }
+        }
+    })
+    console.log('modules', modules)
+
+    // remember the initial state and check if we loop back to it?
+
+    // for (let numberOfButtonPushes = 0; numberOfButtonPushes < 1000; numberOfButtonPushes++) {
+    let numberOfButtonPushes = 0
+    while (!all4HaveSentHigh) {
+        // Here at Desert Machine Headquarters, there is a module with a single button on it called, aptly, the button module. 
+        // When you push the button, a single low pulse is sent directly to the broadcaster module.
+        pulseArray.push({destination: 'broadcaster', source: 'button', pulseType: false})
+        let currentTime: Date = new Date(Date.now())
+        if (numberOfButtonPushes % 100000 === 0) {
+            console.log(`${currentTime.toISOString()} Processing button push # ${numberOfButtonPushes}`)
+            console.log('highPulsesSentFromConjunction', highPulsesSentFromConjunction)
+        }
+        numberOfButtonPushes++
+        lowPulsesSent++
+        while(pulseArray.length > 0) {
+            let currentPulse = pulseArray.shift()
+            // console.log('currentPulse', currentPulse)
+            if (!currentPulse) continue
+            let currentModule = modules.get(currentPulse.destination)
+            if (currentModule) {
+                let result = currentModule.processPulse(currentPulse.pulseType, currentPulse.source, pulseArray, numberOfButtonPushes)
+                lowPulsesSent += result.lowPulsesSent
+                highPulsesSent += result.highPulsesSent
+            }
+        } 
+        
+    }
+
+
+
+    console.log('modules', modules)
+    console.log('lowPulsesSent', lowPulsesSent)
+    console.log('highPulsesSent', highPulsesSent)
+    console.log('highPulsesSentFromConjunction', highPulsesSentFromConjunction)
+
+    // Call findLowestCommonMultiple
+    let highPulseFM = highPulsesSentFromConjunction.get('fm') || []
+    let highPulseDK = highPulsesSentFromConjunction.get('dk') || []
+    let highPulseFQ = highPulsesSentFromConjunction.get('fg') || []
+    let highPulsePQ = highPulsesSentFromConjunction.get('pq') || []
+    let lowestCommonMultiple = 0
+    if (highPulseFM.length >= 1 && highPulseDK.length >= 1 && highPulseFQ.length >= 1 && highPulsePQ.length >= 1) {
+        // The values are all prime.  This means the LCM is them multiplied together.
+        lowestCommonMultiple = highPulseFM[0] * highPulseDK[0] * highPulseFQ[0] * highPulsePQ[0]
+        // lowestCommonMultiple = await findLowestCommonMultiple([highPulseFM[0], highPulseDK[0], highPulseFQ[0], highPulsePQ[0]])
+    }
+    return lowestCommonMultiple
 
 }
 
 // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input2.txt')
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
-    .then(answer => console.log('answer:', answer))
+// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
+    // .then(answer => console.log('answer:', answer))
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input.txt')
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
-// .then(answer => console.log('answer:', answer))
+solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
+.then(answer => console.log('answer:', answer))
