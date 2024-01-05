@@ -9,6 +9,7 @@ https://adventofcode.com/2023
 
 * Dijkstra's algorithm
     * Day 17
+    * Day 23
     
 * Shoelace formula - calculate the area given a series of vertices
     * Day 10 
@@ -18,6 +19,6 @@ https://adventofcode.com/2023
     * Day 10
     * Day 18
 
-Lowest Common Multiple
+* Lowest Common Multiple
     * Day 8
     * Day 20

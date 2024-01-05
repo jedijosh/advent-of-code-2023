@@ -29,6 +29,7 @@ export class Grid {
     public async canMoveToLocation(oldRowNumber: number, oldColumnNumber: number, newRowNumber: number, newColumnNumber: number) {
         if (newRowNumber < 0 || newRowNumber >= this.numberOfRows) return false
         if (newColumnNumber < 0 || newColumnNumber >= this.numberOfColumns) return false
+        if (this.gridPoints[newRowNumber][newColumnNumber].value === '#') return false
         return true
     }
 
