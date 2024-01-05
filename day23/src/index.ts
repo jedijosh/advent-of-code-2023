@@ -16,7 +16,7 @@ class PathPoint extends Point {
     }
 }
 
-export async function solvePartOne ( filename : string) {
+export async function solution ( filename : string, part: number) {
     let counter: number = 0
     let fileLines : String[] = await parseFileIntoArrayOfLines(filename)
     let grid: Grid = new Grid(fileLines)
@@ -28,6 +28,10 @@ export async function solvePartOne ( filename : string) {
     // let goalColumnLocation: number = grid.numberOfColumns - 2
     let goalColumnLocation: number = grid.gridPoints[grid.numberOfRows-1].findIndex(point => point.value === '.')
     console.log(`goal location is ${goalRowLocation},${goalColumnLocation}`)
+
+    // Look at depth first search?
+    // Optimization - Find intersections in the grid and calculate the distances between each intersection.
+    // Breadth first search?
 
     // Algorithm
     // Let the node at which we are starting be called the initial node. Let the distance of node Y be the distance from the initial node to Y. 
@@ -63,17 +67,17 @@ export async function solvePartOne ( filename : string) {
         if (LOGGING) console.log(`At ${currentLocation.row}, ${currentLocation.column} going direction ${currentLocation.direction}, current cost is ${currentLocation.cost}`)
         if (currentLocation.row === goalRowLocation && currentLocation.column === goalColumnLocation) {
             // Reached goal
-            console.log(`Reached goal, cost is ${currentLocation.cost}`)
             if (longestPathLength < currentLocation.cost) {
                 longestPathLength = currentLocation.cost
             }
+            console.log(`Reached goal, cost is ${currentLocation.cost}, max cost is ${longestPathLength}`)
             continue
         }
 
-        await addEligibleNeighbors(grid, currentLocation, pointsVisited, currentLocations)
+        (part === 1) ? await addEligibleNeighbors(grid, currentLocation, pointsVisited, currentLocations) : await addEligibleNeighborsPartTwo(grid, currentLocation, pointsVisited, currentLocations)
 
         currentLocations.sort((pointA, pointB) => {
-            return pointA.point.cost - pointB.point.cost
+            return pointB.point.cost - pointA.point.cost
         })
     }
     let currentTime: Date = new Date(Date.now())
@@ -125,10 +129,44 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: PathPoint, po
     }
 }
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt')
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt')
-    .then(answer => console.log('answer:', answer))
+async function addEligibleNeighborsPartTwo ( grid: Grid, currentLocation: PathPoint, pointsVisited: Array<string>, currentLocations: Array<{point: PathPoint, visited: Array<string>}>) {
+    let newDirections: Array<string> = []
+    // If at last intersection before exit, must take the exit path.  Otherwise it is blocked as there are only 2 paths to get it.
+    if (currentLocation.row === 133 && currentLocation.column === 135) {
+        newDirections = ['D']
+    } else {
+        newDirections = ['L', 'R', 'U', 'D']
+    }
+    for (let direction of newDirections) {
+        let incomingVector : Vector = new Vector(1, direction)
+        try {
+            let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, new Vector(1, direction))
+            let canMoveToLocation = await grid.canMoveToLocation(currentLocation.row, currentLocation.column, pointToAdd.row, pointToAdd.column)
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt', 2)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt', 2)
-// .then(answer => console.log('answer:', answer))
+            let hasPreviouslyBeenVisited: boolean = pointsVisited.includes(`${pointToAdd.row},${pointToAdd.column}`)
+            if (LOGGING) console.log(`Has ${pointToAdd.row}, ${pointToAdd.column} been visited from ${JSON.stringify(incomingVector)}? ${hasPreviouslyBeenVisited}`)
+            
+            let newCost = currentLocation.cost + 1
+            
+            let newPoint: PathPoint = new PathPoint(pointToAdd.row, pointToAdd.column, pointToAdd.value, direction, newCost)
+            if (!hasPreviouslyBeenVisited && canMoveToLocation) {
+                // Hasn't previously been visited from this vector.
+                if (LOGGING) console.log(`Adding ${pointToAdd.row}, ${pointToAdd.column} with ${newCost} as it has not been visited from vector ${JSON.stringify(incomingVector)}`)
+                let newPointsVisited = pointsVisited.slice(0)
+                newPointsVisited.push(`${pointToAdd.row},${pointToAdd.column}`)
+                currentLocations.push({point: newPoint, visited: newPointsVisited})
+            }
+        } catch (error) {
+            if (LOGGING) console.log(`(2) Cannot move from ${currentLocation.row}, ${currentLocation.column} going direction ${direction}`)
+        }
+    }
+}
+
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt', 1)
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt', 1)
+    // .then(answer => console.log('answer:', answer))
+
+// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt', 2)
+solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt', 2)
+.then(answer => console.log('answer:', answer))
+// 5946 is too low
