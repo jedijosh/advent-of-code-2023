@@ -158,8 +158,6 @@ export async function solution ( filename : string) {
                     }
 
                     for (let directionToCheck of possibleDirections) {
-                        console.log(`At ${currentLocation.row}, ${currentLocation.column} checking ${directionToCheck}`)
-                        // if (!validMoveExists && !foundIntersection) {
                         if (!foundIntersection) {
                             try {
                                 let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, new Vector(1, directionToCheck))
@@ -188,6 +186,7 @@ export async function solution ( filename : string) {
                                         } else {
                                             if (LOGGING) console.log(`edge ${JSON.stringify(firstNode)}, ${JSON.stringify(secondNode)} was already added, not adding again.`)
                                         }
+                                        break
                                         
                                     } else {
                                         pointsVisited.push(new Point(currentLocation.row, currentLocation.column, ''))
@@ -198,7 +197,6 @@ export async function solution ( filename : string) {
                                     if (LOGGING) console.log(`Point ${pointToAdd.row}, ${pointToAdd.column} can be moved to ${canMoveToLocation} and was already visited ${pointAlreadyVisited}`)
                                 }
                             } catch (error) {
-                                // When an error occurs, the loop ends because validMoveExists is not set to true.
                                 console.log('ERROR:', error)
                             }
                         }
