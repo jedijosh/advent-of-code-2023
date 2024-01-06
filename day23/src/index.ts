@@ -113,7 +113,9 @@ export async function solution ( filename : string) {
         if (LOGGING) console.log('-------------CALCULATING EDGE----------------------------------')
         let startingNode: Node = graph.nodes[nodeIndex]
         let startingPoint: Point = await grid.getPointAtLocation(startingNode.x, startingNode.y)
-        if (LOGGING) console.log(`starting search from ${startingPoint.row}, ${startingPoint.column}`)
+        let pointsVisited: Array<Point> = new Array()
+        pointsVisited.push(startingPoint)
+        if (LOGGING) console.log(`Starting search from ${startingPoint.row}, ${startingPoint.column}`)
         
         // From the node, find out which direction(s) can be moved to.
         let possibleDirections: Array<string> = []
@@ -130,34 +132,15 @@ export async function solution ( filename : string) {
         }
         // For each direction which can be moved to, follow the path until no more moves are possible or another node is found.
         for (let direction of possibleDirections) {
-            let pointsVisited: Array<Point> = new Array()
-            pointsVisited.push(startingPoint)
             let currentLocation: PathPoint = new PathPoint(startingPoint.row, startingPoint.column, startingPoint.value, direction, 0)
             if (LOGGING) console.log(`Starting search at ${currentLocation.row}, ${currentLocation.column} searching ${direction}`)
             let foundIntersection = false
-            let validMoveExists = true
             let currentCost = 0
 
-            while (!foundIntersection && validMoveExists) {
+            while (!foundIntersection) {
                 try {
-                    validMoveExists = false
-                    let possibleDirections: Array<string> = []
-                    switch (direction) {
-                        case 'U': 
-                            possibleDirections = ['U', 'L', 'R']
-                            break
-                        case 'D': 
-                            possibleDirections = ['D', 'L', 'R']
-                            break
-                        case 'L': 
-                            possibleDirections = ['L', 'D', 'U']
-                            break
-                        default: 
-                            possibleDirections = ['R', 'D', 'U']
-                            break
-                    }
-
-                    for (let directionToCheck of possibleDirections) {
+                    for (let directionToCheck of ['U', 'D', 'L', 'R']) {
+                        if (LOGGING) console.log(`At ${currentLocation.row}, ${currentLocation.column}, Checking ${directionToCheck}`)
                         if (!foundIntersection) {
                             try {
                                 let pointToAdd: Point = await grid.getNextLocation(currentLocation.row, currentLocation.column, new Vector(1, directionToCheck))
@@ -167,7 +150,6 @@ export async function solution ( filename : string) {
                                 if (canMoveToLocation && !pointAlreadyVisited) {
                                     direction = directionToCheck
                                     if (LOGGING) console.log(`Moving to ${pointToAdd.row}, ${pointToAdd.column} searching ${direction}`)
-                                    validMoveExists = true
                                     // Found a valid movement.  Set that as the next location and stop searching.
                                     currentCost++
                                     // If now at an intersection, add the edge and stop searching on this path
@@ -185,14 +167,13 @@ export async function solution ( filename : string) {
                                             startingNode.edges.push(newEdge)
                                         } else {
                                             if (LOGGING) console.log(`edge ${JSON.stringify(firstNode)}, ${JSON.stringify(secondNode)} was already added, not adding again.`)
-                                        }
-                                        break
-                                        
+                                        }                                        
                                     } else {
                                         pointsVisited.push(new Point(currentLocation.row, currentLocation.column, ''))
                                         currentLocation.row = pointToAdd.row
                                         currentLocation.column = pointToAdd.column
                                     }
+                                    break
                                 } else {
                                     if (LOGGING) console.log(`Point ${pointToAdd.row}, ${pointToAdd.column} can be moved to ${canMoveToLocation} and was already visited ${pointAlreadyVisited}`)
                                 }
@@ -207,7 +188,6 @@ export async function solution ( filename : string) {
             }
         }
     }
-
     // Now we have the list of nodes and edges
     
     console.log('nodes', graph.nodes)
