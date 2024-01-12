@@ -2,13 +2,13 @@ import { solvePartOne, solution } from '../src/index'
 
 describe('test solvePartOne', () => {
     it('result should be 94 with sample data', async () => {
-        let partOneAnswer = await solvePartOne('./tests/data/input.txt')
+        let partOneAnswer = await solvePartOne('./tests/data/input.txt', 7 , 27)
         expect(partOneAnswer).toBe(94)
     })
     
-    test('result should be 2106 with my data', async () => {
-        let partOneAnswer = await solvePartOne('./input.txt')
-        expect(partOneAnswer).toBe(2106)
+    test('result should be 12783 with my data', async () => {
+        let partOneAnswer = await solvePartOne('./input.txt', 200000000000000, 400000000000000)
+        expect(partOneAnswer).toBe(12783)
     })
     
     test('part 2 result should be 154 with sample data', async () => {
