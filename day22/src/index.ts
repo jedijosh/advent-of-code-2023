@@ -297,10 +297,13 @@ export async function solvePartTwo ( filename : string) {
     }
     return result
 }
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day22/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day22/input.txt')
+
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day22/data'
+
+// solvePartOne(dataFolder + '/tests/input.txt')
+// solvePartOne(dataFolder + '/input.txt')
 //     .then(answer => console.log('answer:', answer))
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day22/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day22/input.txt')
+// solvePartTwo(dataFolder + '/tests/input.txt')
+solvePartTwo(dataFolder + '/input.txt')
     .then(answer => console.log('answer:', answer))
