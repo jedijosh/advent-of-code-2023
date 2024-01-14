@@ -369,10 +369,11 @@ async function addEligibleNeighbors ( grid: Grid, currentLocation: PathPoint, po
     }
 }
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt')
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day23'
+// solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/input.txt')
     // .then(answer => console.log('answer:', answer))
 
-// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/tests/data/input.txt')
-solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day23/input.txt')
-.then(answer => console.log('answer:', answer))
+// solution(dataFolder + '/data/tests/input.txt')
+// solution(dataFolder + '/input.txt')
+// .then(answer => console.log('answer:', answer))
