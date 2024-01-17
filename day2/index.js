@@ -1,8 +1,11 @@
 const fs = require('node:fs/promises')
 
+const LOGGING = false
+
 async function solvePartOne ( filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
 
     let sumOfPossibleGames = 0
@@ -26,7 +29,7 @@ async function solvePartOne ( filename) {
             }
             if (!await isTurnPossible(numberOfRed, numberOfGreen, numberOfBlue)) {
                 gameWasPossible = false
-                console.log(`${gameNumber} was not possible`)
+                if (LOGGING) console.log(`${gameNumber} was not possible`)
             }
         }
         if (gameWasPossible) sumOfPossibleGames += Number(gameNumber)
@@ -37,6 +40,7 @@ async function solvePartOne ( filename) {
 async function solvePartTwo ( filename ) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
 
     let sumOfGames = 0
@@ -75,10 +79,11 @@ async function isTurnPossible (numberOfRed, numberOfGreen, numberOfBlue) {
     return ( numberOfRed <= MAX_RED_CUBES && numberOfGreen <= MAX_GREEN_CUBES && numberOfBlue <= MAX_BLUE_CUBES )
 }
 
-solvePartOne('./input.txt')
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day2'
+solvePartOne(dataFolder + '/data/input.txt')
     .then(sumOfPossibleGames => console.log('sumOfPossibleGames:', sumOfPossibleGames))
 
-solvePartTwo('./input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
     .then(sumOfGames => console.log('sumOfGames:', sumOfGames))
 
 module.exports = { solvePartOne, solvePartTwo }

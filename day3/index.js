@@ -4,6 +4,7 @@ const { showCompletionScript } = require('yargs')
 async function solvePartOne (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
     const DIGIT_REGEX = /\d/
     const PERIOD_REGEX = /\./
@@ -72,6 +73,7 @@ async function solvePartOne (filename) {
 async function solvePartTwo (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
     const ASTERISK_REGEX = /\*/
 
@@ -135,10 +137,11 @@ async function removeDigitsAndPeriods (inputString) {
     return stringWithPeriodsRemoved.trim()
 }
 
-// solvePartOne('./input.txt')
-//     .then(answer => console.log('Answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day3'
+solvePartOne(dataFolder + '/data/input.txt')
+    .then(answer => console.log('Answer:', answer))
 
-solvePartTwo('./input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
 // solvePartTwo('./tests/data/input.txt')
     .then(answer => console.log('Answer:', answer))
 

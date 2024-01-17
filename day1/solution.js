@@ -1,17 +1,20 @@
 const fs = require('node:fs/promises')
 const NUMBER_TEXT_REGEX = /(zero|one|two|three|four|five|six|seven|eight|nine)/gi
 
-async function solvePartOne () {
-    let file = await fs.open('./input.txt')
+const LOGGING = false
+
+async function solvePartOne (filename) {
+    let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
     let sum = 0
     lines.forEach(line => { 
         let numbers = line.match(/\d{1}/g)
-        console.log(numbers)
+        if (LOGGING) console.log(numbers)
         let firstNumber = numbers[0]
         let lastNumber = numbers[numbers.length-1]
-        console.log(`firstNumber: ${firstNumber}, lastNumber: ${lastNumber}`)
+        if (LOGGING) console.log(`firstNumber: ${firstNumber}, lastNumber: ${lastNumber}`)
         sum += Number(`${firstNumber}${lastNumber}`)
     })
     return sum
@@ -20,6 +23,7 @@ async function solvePartOne () {
 async function solvePartTwo (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
     let sum = 0
     lines.forEach(line => { 
@@ -43,7 +47,7 @@ function replaceTextWithNumbers ( inputString ) {
         if (!results) break
         let translatedNumber = numbers.indexOf(results[0])
         if ( translatedNumber === -1 ) {
-            modifiedString += results
+            modifiedString += results[0]
         } else {
             modifiedString += translatedNumber
         }
@@ -53,12 +57,11 @@ function replaceTextWithNumbers ( inputString ) {
 
 }
 
-// solvePartTwo('./tests/data/sampleInputPartTwo.txt')
-solvePartTwo('./input.txt')
-    .then(result => {
-        console.log('result:', result)
-    })
-
-    // NOT 55330
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day1'
+// solvePartOne(dataFolder + '/data/input.txt')
+solvePartOne(dataFolder + '/data/tests/part1.txt')
+// solvePartTwo(dataFolder + '/data/tests/part2.txt')
+// solvePartTwo(dataFolder + '/data/input.txt')
+    .then(result => { console.log('result:', result) })
 
 module.exports = { replaceTextWithNumbers, solvePartOne, solvePartTwo }

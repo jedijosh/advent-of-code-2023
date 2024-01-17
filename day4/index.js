@@ -57,11 +57,11 @@ async function solvePartTwo (filename) {
     return totalNumberOfCards
 }
 
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day4'
+solvePartOne(dataFolder + '/data/input.txt')
+    .then(answer => console.log('Answer:', answer))
 
-// solvePartOne('./input.txt')
-//     .then(answer => console.log('Answer:', answer))
-
-solvePartTwo('./input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
 // solvePartTwo('./tests/data/input.txt')
     .then(answer => console.log('Answer:', answer))
 
