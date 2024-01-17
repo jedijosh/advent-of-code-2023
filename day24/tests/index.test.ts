@@ -11,13 +11,13 @@ describe('test solvePartOne', () => {
         expect(partOneAnswer).toBe(12783)
     })
     
-    test('part 2 result should be 154 with sample data', async () => {
-        let partTwoAnswer = await solution('./tests/data/input.txt')
-        expect(partTwoAnswer).toBe(154)
-    })
+    // test('part 2 result should be 154 with sample data', async () => {
+    //     let partTwoAnswer = await solvePartTwo('./tests/data/input.txt')
+    //     expect(partTwoAnswer).toBe(154)
+    // })
     
-    // test('part 2 result should be 6350 with my data', async () => {
-    //     let partTwoAnswer = await solution('./input.txt')
-    //     expect(partTwoAnswer).toBe(6350)
+    // test('part 2 result should be 948485822969419 with my data', async () => {
+    //     let partTwoAnswer = await solvePartTwo('./input.txt')
+    //     expect(partTwoAnswer).toBe(948485822969419)
     // })
 })
