@@ -62,61 +62,7 @@ export class Grid {
         return this.gridPoints[newRowNumber][newColumnNumber]
     }
 
-    public async getNextLocationInfiniteGrid(oldRowNumber: number, oldColumnNumber: number, vector: Vector) {
-        let newRowNumber: number
-        let newColumnNumber: number
-        switch (vector.direction) {
-            case 'U':
-                newRowNumber = oldRowNumber - vector.magnitude
-                newColumnNumber = oldColumnNumber
-                break
-            case 'D':
-                newRowNumber = oldRowNumber + vector.magnitude
-                newColumnNumber = oldColumnNumber
-                break
-            case 'L':
-                newRowNumber = oldRowNumber
-                newColumnNumber = oldColumnNumber - vector.magnitude
-                break
-            case 'R':
-                newRowNumber = oldRowNumber
-                newColumnNumber = oldColumnNumber + vector.magnitude
-                break
-            default:
-                newRowNumber = -1
-                newColumnNumber = -1
-        }
-        if (newRowNumber < 0) newRowNumber = this.numberOfRows - 1
-        if (newColumnNumber < 0) newColumnNumber = this.numberOfColumns - 1
-        if (newRowNumber >= this.numberOfRows) newRowNumber = 0
-        if (newColumnNumber >= this.numberOfColumns) newColumnNumber = 0
-        return this.gridPoints[newRowNumber][newColumnNumber]
-    }
-
     public async getPointAtLocation(rowNumber: number, columnNumber: number) {
         return this.gridPoints[rowNumber][columnNumber]
-    }
-
-    public async getPointAtLocationInfiniteGrid(rowNumber: number, columnNumber: number) {
-        let gridPositionX: number = 0
-        let gridPositionY: number = 0
-        let adjustedRowNumber: number = Math.abs(rowNumber)
-        while ( rowNumber < 0 ) {
-            rowNumber += this.numberOfRows
-            gridPositionY--
-        }
-        while ( rowNumber > this.numberOfRows ) {
-            rowNumber -= this.numberOfRows
-            gridPositionY++
-        }
-        while ( columnNumber < 0 ) {
-            columnNumber += this.numberOfColumns
-            gridPositionX--
-        }
-        while ( columnNumber > this.numberOfColumns ) {
-            rowNumber -= this.numberOfColumns
-            gridPositionX++
-        }
-        return {point: this.gridPoints[rowNumber][columnNumber], gridId: {x: gridPositionX, y: gridPositionY} }
     }
 }
