@@ -263,14 +263,13 @@ async function solvePartTwo ( filename ) {
     return totalWinnings
 }
 
-// solvePartOne('./input.txt')
- //solvePartOne('./tests/data/input2.txt')
-    // .then(answer => console.log('answer:', answer))s
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day7'
+solvePartOne(dataFolder + '/data/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input2.txt')
 
-solvePartTwo('./input.txt')
-// solvePartTwo('./tests/data/input.txt')
+// solvePartTwo(dataFolder + '/data/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
     .then(answer => console.log('answer:', answer))
-
-
 
 module.exports = { solvePartOne, solvePartTwo, isFiveOfAKind, isFourOfAKind, isFullHouse, isThreeOfAKind, isTwoPair, isOnePair } 

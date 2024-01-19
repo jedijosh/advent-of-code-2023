@@ -274,13 +274,13 @@ async function canRockMoveNorth ( mapLayout, rockPosition ) {
 }
 
 
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day14'
 
-solvePartOne('./tests/data/input.txt')
-// solvePartOne('./input.txt')
+solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
+
+//solvePartTwo(dataFolder + '/data/tests/input.txt')
+// solvePartTwo(dataFolder + '/data/input.txt', 1000)
     .then(finalNumber => console.log('finalNumber:', finalNumber))
-
-//solvePartTwo('./tests/data/input.txt')
-// solvePartTwo('./input.txt', 1000)
-    // .then(finalNumber => console.log('finalNumber:', finalNumber))
 
 module.exports = { solvePartOne, solvePartTwo }

@@ -428,14 +428,13 @@ export async function solvePartTwo ( filename : string) {
     return startingXPosition + startingYPosition + startingZPosition
 }
 
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day24'
 
+// solvePartOne(dataFolder + '/data/tests/input.txt', 7, 27)
+// solvePartOne(dataFolder + '/data/tests/input2.txt', 7, 27)
+// solvePartOne(dataFolder + '/data/input.txt', 200000000000000, 400000000000000)
 
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day24/tests/data/input.txt', 7, 27)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day24/tests/data/input2.txt', 7, 27)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day24/input.txt', 200000000000000, 400000000000000)
-    // .then(answer => console.log('answer:', answer))
-
-    // solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day24/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day24/input.txt')
 .then(answer => console.log('answer:', answer))

@@ -1,28 +1,29 @@
-import { solvePartOne, findNextDirection } from '../src/index'
+import { solvePartOne, solvePartTwo, findNextDirection } from '../src/index'
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day10'
 
 describe('test solvePartOne', () => {
     it('result should be 8 with sample data', async () => {
-        let result = await solvePartOne('./tests/data/input.txt')
+        let result = await solvePartOne(dataFolder + '/data/tests/input.txt')
         expect(result).toBe(8)
     })
 
     it('result should be 4 with sample data 2', async () => {
-        let result = await solvePartOne('./tests/data/input2.txt')
+        let result = await solvePartOne(dataFolder + '/data/tests/input2.txt')
         expect(result).toBe(4)
     })
 
     test('result should be 6828 with my data', async () => {
-        let partOneAnswer = await solvePartOne('./input.txt')
+        let partOneAnswer = await solvePartOne(dataFolder + '/data/input.txt')
         expect(partOneAnswer).toBe(6828)
     })
     
     test('part 2 result should be 4 with sample data', async () => {
-        let partTwoAnswer = await solvePartOne('./tests/data/input-part2.txt')
+        let partTwoAnswer = await solvePartOne(dataFolder + '/data/tests/input-part2.txt')
         expect(partTwoAnswer).toBe(4)
     })
     
     test('part 2 result should be 459 with my data', async () => {
-        let partTwoAnswer = await solvePartTwo('./input.txt')
+        let partTwoAnswer = await solvePartTwo(dataFolder + '/data/input.txt')
         expect(partTwoAnswer).toBe(459)
     })
 })
@@ -92,10 +93,3 @@ describe('test findNextDirection', () => {
         expect(result).toBe('D')
     })
 })
-
-
-
-
-
-
-// . is ground; there is no pipe in this tile.

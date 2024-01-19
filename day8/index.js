@@ -169,14 +169,12 @@ async function doAllLocationsEndInZ ( locationArray ) {
     return allEndInZ
 }
 
-// solvePartOne('./input.txt')
-//  solvePartOne('./tests/data/input2.txt')
-    // .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day8'
+// solvePartOne(dataFolder + '/data/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input2.txt')
 
-solvePartTwo('./input.txt')
-// solvePartTwo('./tests/data/input3.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input3.txt')
     .then(answer => console.log('answer:', answer))
-
-
 
 module.exports = { solvePartOne, solvePartTwo, doAllLocationsEndInZ } 

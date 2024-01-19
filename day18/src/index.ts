@@ -10,7 +10,6 @@ export async function solvePartOne ( filename : string) {
     let currentLocation = {x: 0, y: 0}
     for (let line of fileLines) {
         let splitString = line.split(' ')
-        console.log('splitString', splitString)
         let direction = splitString[0]
         let magnitude: number = Number(splitString[1])
         let newX: number = currentLocation.x
@@ -116,11 +115,12 @@ export async function findAreaUsingVerticies (verticies: Array<{x: number, y: nu
     }
     return Math.abs(area / 2.0);
 }
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day18'
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day18/tests/data/input.txt', 1)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day18/input.txt', 1)
-    // .then(answer => console.log('answer:', answer))
+// solvePartOne(dataFolder + '/data/tests/input.txt', 1)
+// solvePartOne(dataFolder + '/data/input.txt', 1)
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day18/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day18/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
+
 .then(answer => console.log('answer:', answer))

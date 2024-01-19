@@ -189,7 +189,6 @@ export async function solvePartTwo ( filename : string) {
 
     for (let path of pathsToFind) {
         let distance =  Math.abs(path.firstGalaxy.finalY - path.secondGalaxy.finalY) + Math.abs(path.firstGalaxy.finalX - path.secondGalaxy.finalX)
-        console.log('distance', distance)
         pathLength += distance
     }
 
@@ -224,10 +223,10 @@ export async function solvePartTwo ( filename : string) {
     
 // }
 
-// // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day11/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day11/input.txt')
-//     .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day11'
+// // solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day11/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day11/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
         .then(answer => console.log('answer:', answer))

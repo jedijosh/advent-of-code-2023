@@ -1,6 +1,8 @@
 const { Console } = require('node:console')
 const fs = require('node:fs/promises')
 
+const LOGGING = false
+
 async function solvePartOne ( filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
@@ -153,8 +155,8 @@ async function solvePartTwo ( filename ) {
                     sourceRangeEnd: Number(seedList[seedRange]) + Number(seedList[seedRange + 1]) - 1
                 })
             }
-            console.log(`arrayOfMaps:`)
-            console.log(arrayOfMaps)
+            if (LOGGING) console.log(`arrayOfMaps:`)
+            if (LOGGING) console.log(arrayOfMaps)
             mappingData.set('seed', {
                 arrayOfMaps: arrayOfMaps
             })
@@ -182,7 +184,7 @@ async function solvePartTwo ( filename ) {
     let seedExistsForLocation = false
     while (!seedExistsForLocation) {
         
-        if (minLocation % 500000 === 0 ) console.log(`checking location ${minLocation}`)
+        if (minLocation % 500000 === 0 && LOGGING) console.log(`checking location ${minLocation}`)
         let currentSubject = 'location'
         let currentValue = minLocation
         while (currentSubject !== 'seed') {
@@ -198,7 +200,7 @@ async function solvePartTwo ( filename ) {
         let seedExists = false
         for (let i = 0; i < seedMap.length; i++) {
             if ( Number(currentValue) >= Number(seedMap[i].sourceRangeStart) && Number(currentValue) <= Number(seedMap[i].sourceRangeEnd)) {
-                console.log(`${currentValue} is between ${seedMap[i].sourceRangeStart} and ${seedMap[i].sourceRangeEnd}`)
+                if (LOGGING) console.log(`${currentValue} is between ${seedMap[i].sourceRangeStart} and ${seedMap[i].sourceRangeEnd}`)
                 seedExists = true
                 break
             }
@@ -214,10 +216,10 @@ async function solvePartTwo ( filename ) {
     return minLocation
 }
 
-// solvePartOne('./input.txt')
-//     .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day5'
+solvePartOne(dataFolder + '/data/input.txt')
 
-solvePartTwo('./input.txt')
+// solvePartTwo(dataFolder + '/data/input.txt')
 //solvePartTwo('./tests/data/input.txt')
     .then(answer => console.log('answer:', answer))
 

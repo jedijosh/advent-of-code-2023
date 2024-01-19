@@ -2,7 +2,8 @@ const fs = require('node:fs/promises')
 
 async function solvePartOne ( filename) {
     let file = await fs.open(filename)
-    let fileInput = await file.readFile({ encoding: 'utf8'})
+    let fileInput = await file.readFile({ encoding: 'utf8' })
+    file.close()
     let lines = fileInput.trim().split('\n')
 
     let finalNumber = 0
@@ -10,6 +11,7 @@ async function solvePartOne ( filename) {
 
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++ ) {
         if (lines[lineNumber].trim() === '' || lineNumber === (lines.length - 1)) {
+            if (lineNumber === (lines.length - 1)) pattern.push(lines[lineNumber])
             let numberOfRowsAboveReflection = await findHorizontalReflection(pattern)
             // if (numberOfRowsAboveReflection !== 0 ) console.log(`reflection found at row ${numberOfRowsAboveReflection}`)
             let columnsAsRows = await transposeColumnsToRows(pattern)
@@ -57,6 +59,7 @@ async function findHorizontalReflection ( patternArray) {
 async function solvePartTwo ( filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
+    file.close()
     let lines = fileInput.trim().split('\n')
 
     let finalNumber = 0
@@ -122,7 +125,7 @@ async function numberOfDifferences ( firstString, secondString) {
 
 async function transposeColumnsToRows ( patternArray) {
     let columns = []
-    for (let columnNumber = 0; columnNumber < patternArray[0].length - 1; columnNumber++) {
+    for (let columnNumber = 0; columnNumber < patternArray[0].length; columnNumber++) {
         for (let rowNumber = 0; rowNumber < patternArray.length; rowNumber++) {
             if ( rowNumber === 0) columns[columnNumber] = ''
             columns[columnNumber] += patternArray[rowNumber].substring(columnNumber, columnNumber + 1).trim()
@@ -131,10 +134,11 @@ async function transposeColumnsToRows ( patternArray) {
     return columns
 }
 
-// solvePartOne('./input.txt')
-//     .then(finalNumber => console.log('finalNumber:', finalNumber))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day13'
+solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
+// solvePartTwo(dataFolder + '/data/input.txt')
 
-solvePartTwo('./input.txt')
-    .then(finalNumber => console.log('finalNumber:', finalNumber))
+.then(finalNumber => console.log('finalNumber:', finalNumber))
 
 module.exports = { solvePartOne, solvePartTwo, numberOfDifferences }

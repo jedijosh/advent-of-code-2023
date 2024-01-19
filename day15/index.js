@@ -80,13 +80,12 @@ async function solvePartTwo ( filename ) {
     return finalValue
 }
 
-// solvePartOne('./tests/data/input.txt')
-// //solvePartOne('./input.txt')
-//     .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day15'
+// solvePartOne(dataFolder + '/data/tests/input.txt')
+// //solvePartOne(dataFolder + '/data/input.txt')
 
-//solvePartTwo('./tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day15/input.txt')
-//  solvePartTwo('./input.txt')
+//solvePartTwo(dataFolder + '/data/tests/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
     .then(answer => console.log('answer:', answer))
 
 module.exports = { solvePartOne, solvePartTwo }

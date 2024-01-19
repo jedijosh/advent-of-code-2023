@@ -167,7 +167,6 @@ export async function solvePartOne ( filename : string) {
     }
     
     // Set initial state of conjunction modules
-    console.log(conjunctionModules)
     modules.forEach((module) => { 
         for (let destination of module.destinationModules) {
             // If the destination is listed in the conjunction modules list, add this as a connected module to it.
@@ -181,7 +180,6 @@ export async function solvePartOne ( filename : string) {
             }
         }
     })
-    console.log('modules', modules)
 
     // remember the initial state and check if we loop back to it?
 
@@ -202,9 +200,6 @@ export async function solvePartOne ( filename : string) {
             }
         } 
     }
-    console.log('modules', modules)
-    console.log('lowPulsesSent', lowPulsesSent)
-    console.log('highPulsesSent', highPulsesSent)
     return lowPulsesSent * highPulsesSent
 
 }
@@ -244,7 +239,6 @@ export async function solvePartTwo ( filename : string) {
     }
     
     // Set initial state of conjunction modules
-    console.log(conjunctionModules)
     modules.forEach((module) => { 
         for (let destination of module.destinationModules) {
             // If the destination is listed in the conjunction modules list, add this as a connected module to it.
@@ -258,7 +252,6 @@ export async function solvePartTwo ( filename : string) {
             }
         }
     })
-    console.log('modules', modules)
 
     // remember the initial state and check if we loop back to it?
 
@@ -271,13 +264,11 @@ export async function solvePartTwo ( filename : string) {
         let currentTime: Date = new Date(Date.now())
         if (numberOfButtonPushes % 100000 === 0) {
             console.log(`${currentTime.toISOString()} Processing button push # ${numberOfButtonPushes}`)
-            console.log('highPulsesSentFromConjunction', highPulsesSentFromConjunction)
         }
         numberOfButtonPushes++
         lowPulsesSent++
         while(pulseArray.length > 0) {
             let currentPulse = pulseArray.shift()
-            // console.log('currentPulse', currentPulse)
             if (!currentPulse) continue
             let currentModule = modules.get(currentPulse.destination)
             if (currentModule) {
@@ -288,13 +279,6 @@ export async function solvePartTwo ( filename : string) {
         } 
         
     }
-
-
-
-    console.log('modules', modules)
-    console.log('lowPulsesSent', lowPulsesSent)
-    console.log('highPulsesSent', highPulsesSent)
-    console.log('highPulsesSentFromConjunction', highPulsesSentFromConjunction)
 
     // Call findLowestCommonMultiple
     let highPulseFM = highPulsesSentFromConjunction.get('fm') || []
@@ -310,10 +294,11 @@ export async function solvePartTwo ( filename : string) {
     return lowestCommonMultiple
 
 }
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day20'
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/tests/data/input2.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
-    // .then(answer => console.log('answer:', answer))
+// solvePartOne(dataFolder + '/data/tests/input2.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
 
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day20/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
+
 .then(answer => console.log('answer:', answer))

@@ -109,14 +109,15 @@ export async function solvePartTwo ( filename : string) {
     return sumOfNextValues
 }
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/tests/data/input3.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/input.txt')
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day9'
+// solvePartOne(dataFolder + '/data/tests/input3.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
 //     .then(answer => console.log('answer:', answer))
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
     .then(answer => console.log('answer:', answer))
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/tests/data/input.txt', 2)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day9/input.txt', 2)
+// solvePartOne(dataFolder + '/data/tests/input.txt', 2)
+// solvePartOne(dataFolder + '/data/input.txt', 2)
 // .then(answer => console.log('answer:', answer))

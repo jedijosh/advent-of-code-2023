@@ -1,28 +1,29 @@
 import { solution, findCombinations } from '../src/index'
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day12'
 
 describe('test solvePartOne', () => {
     it('result should be 21 with sample data with no added copies', async () => {
-        let result = await solution('./tests/data/input.txt', 0)
+        let result = await solution(dataFolder + '/data/tests/input.txt', 0)
         expect(result).toBe(21)
     })
 
     test('result should be 7732 with my data with no added copies', async () => {
-        let partOneAnswer = await solution('./input.txt', 0)
+        let partOneAnswer = await solution(dataFolder + '/data/input.txt', 0)
         expect(partOneAnswer).toBe(7732)
     })
     
     // test('part 2 result should be 525152 with sample data', async () => {
-    //     let partTwoAnswer = await solution('./tests/data/input.txt', 4)
+    //     let partTwoAnswer = await solution(dataFolder + '/data/tests/input.txt', 4)
     //     expect(partTwoAnswer).toBe(525152)
     // })
 
     test('part 2 result should be 16 with sample data and 4 added copies', async () => {
-        let partTwoAnswer = await solution('./tests/data/input3.txt', 4)
+        let partTwoAnswer = await solution(dataFolder + '/data/tests/input3.txt', 4)
         expect(partTwoAnswer).toBe(16)
     })
     
     // test('part 2 result should be 4500070301581 with my data', async () => {
-    //     let partTwoAnswer = await solvePartTwo('./input.txt')
+    //     let partTwoAnswer = await solvePartTwo(dataFolder + '/data/input.txt')
     //     expect(partTwoAnswer).toBe(4500070301581)
     // })
 })

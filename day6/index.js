@@ -1,7 +1,6 @@
-const { Console } = require('node:console')
 const fs = require('node:fs/promises')
 
-async function solvePartOne ( filename) {
+async function solvePartOne (filename) {
     let file = await fs.open(filename)
     let fileInput = await file.readFile({ encoding: 'utf8'})
     let lines = fileInput.trim().split('\n')
@@ -89,14 +88,13 @@ async function solvePartTwo ( filename ) {
 
 }
 
-// solvePartOne('./input.txt')
-// solvePartOne('./tests/data/input.txt')
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day6'
+// solvePartOne(dataFolder + '/data/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input.txt')
 //     .then(answer => console.log('answer:', answer))
 
-solvePartTwo('./input.txt')
-// solvePartTwo('./tests/data/input.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input.txt')
     .then(answer => console.log('answer:', answer))
-
-
 
 module.exports = { solvePartOne, solvePartTwo } 

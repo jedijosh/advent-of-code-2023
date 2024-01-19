@@ -1,4 +1,3 @@
-import path from 'path'
 import { parseFileIntoArrayOfLines } from './utils'
 
 const LOGGING = false
@@ -11,7 +10,7 @@ export async function solvePartOne ( filename : string) {
     let workflows: Map<string, Array<{comparison: {property: string, operator: string, numberToCompare: number}, nextStep: string}>> = new Map()
     while (fileLines[lineNumber].trim() !== '') {
         let workflowKey = fileLines[lineNumber].substring(0, fileLines[lineNumber].indexOf('{'))
-        let workflowRulesString = fileLines[lineNumber].substring(fileLines[lineNumber].indexOf('{') + 1, fileLines[lineNumber].length - 2)
+        let workflowRulesString = fileLines[lineNumber].substring(fileLines[lineNumber].indexOf('{') + 1, fileLines[lineNumber].length - 1)
         let workflowRules = workflowRulesString.split(',')
         let workflowRulesArray: Array<{comparison: {property: string, operator: string, numberToCompare: number}, nextStep: string}> = []
         for (let rule of workflowRules) {
@@ -40,7 +39,6 @@ export async function solvePartOne ( filename : string) {
 
     let parts: Array<{x: number; m: number; a: number; s: number; }> = []
     for (lineNumber = lineNumber + 1; lineNumber < fileLines.length; lineNumber++) {
-        console.log(`processing line number ${lineNumber}`)
         let splitString = fileLines[lineNumber].split(',')
         let partMap: Map<string, number> = new Map()
         splitString.map(instance => partMap.set(instance.split('=')[0].replace(/\{/g, ''), parseInt(instance.split('=')[1])))
@@ -89,7 +87,7 @@ export async function solvePartTwo ( filename : string) {
     let workflows: Map<string, Array<{comparison: {property: string, operator: string, numberToCompare: number}, nextStep: string}>> = new Map()
     while (fileLines[lineNumber].trim() !== '') {
         let workflowKey = fileLines[lineNumber].substring(0, fileLines[lineNumber].indexOf('{'))
-        let workflowRulesString = fileLines[lineNumber].substring(fileLines[lineNumber].indexOf('{') + 1, fileLines[lineNumber].length - 2)
+        let workflowRulesString = fileLines[lineNumber].substring(fileLines[lineNumber].indexOf('{') + 1, fileLines[lineNumber].length)
         let workflowRules = workflowRulesString.split(',')
         let workflowRulesArray: Array<{comparison: {property: string, operator: string, numberToCompare: number}, nextStep: string}> = []
         for (let rule of workflowRules) {
@@ -97,7 +95,7 @@ export async function solvePartTwo ( filename : string) {
             if (splitString.length === 1) {
                 // Represents a rule which doesn't have a comparison.  
                 // Set to something which will always be true.
-                workflowRulesArray.push({comparison: {property: 'x', operator: '>', numberToCompare: 0}, nextStep: splitString[0]})    
+                workflowRulesArray.push({comparison: {property: 'x', operator: '>', numberToCompare: 0}, nextStep: splitString[0].replace('}', '')})    
             } else {
                 workflowRulesArray.push({comparison: {
                     property: splitString[0].substring(0,1), 
@@ -235,7 +233,6 @@ export async function solvePartTwo ( filename : string) {
                 if (LOGGING) console.log('current workflow', currentPathFalseCopy.currentWorkflow)
                 let pathCombinations: number = 1
                 currentPathFalseCopy.possibleValues.forEach(value => {
-                    console.log('value', value)
                     pathCombinations *= (value.max - value.min + 1)
                 })
                 if (LOGGING) console.log(`***** Path ${newVisitedArray.flat().toString()} has ${pathCombinations} combinations`)
@@ -297,10 +294,12 @@ export async function solvePartTwo ( filename : string) {
 
 }
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/input.txt')
-    // .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day19'
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/tests/data/input.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day19/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
+
+solvePartTwo(dataFolder + '/data/tests/input.txt')
+// solvePartTwo(dataFolder + '/data/input.txt')
+
 .then(answer => console.log('answer:', answer))

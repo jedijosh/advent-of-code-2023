@@ -1,21 +1,22 @@
 const index = require('../index.js')
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day15'
 
 test('result should be 1320 with sample data', async () => {
-    let partOneAnswer = await index.solvePartOne('./tests/data/input.txt')
-    expect(partOneAnswer).toBe(1320)
+    let result = await index.solvePartOne(dataFolder + '/data/tests/input.txt')
+    expect(result).toBe(1320)
 })
 
 test('result should be 521341 with my data', async () => {
-    let partOneAnswer = await index.solvePartOne('./input.txt')
-    expect(partOneAnswer).toBe(521341)
+    let result = await index.solvePartOne(dataFolder + '/data/input.txt')
+    expect(result).toBe(521341)
 })
 
 test('part 2 result should be 145 with my data', async () => {
-    let partTwoAnswer = await index.solvePartTwo('./tests/data/input.txt')
-    expect(partTwoAnswer).toBe(145)
+    let result = await index.solvePartTwo(dataFolder + '/data/tests/input.txt')
+    expect(result).toBe(145)
 })
 
 test('part 2 result should be 252782 with my data', async () => {
-    let partTwoAnswer = await index.solvePartTwo('./input.txt')
-    expect(partTwoAnswer).toBe(252782)
+    let result = await index.solvePartTwo(dataFolder + '/data/input.txt')
+    expect(result).toBe(252782)
 })

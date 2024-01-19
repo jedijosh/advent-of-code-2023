@@ -289,11 +289,10 @@ export async function solution ( filename : string, copiesToAdd: number) {
 }
 
 
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day12'
+// solution(dataFolder + 'data/tests/input.txt')
+// solution(dataFolder + '/data/input.txt')
 
-// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt')
-// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt')
-    // .then(answer => console.log('answer:', answer))
-
-solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/tests/data/input.txt', 4)
-// solution('/mnt/c/Users/joshs/code/advent-of-code-2023/day12/input.txt', 4)
+solution(dataFolder + '/data/tests/input.txt', 4)
+// solution(dataFolder + '/data/input.txt', 4)
         .then(answer => console.log('answer:', answer))

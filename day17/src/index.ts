@@ -263,11 +263,12 @@ async function addEligibleNeighborsPartTwo ( grid: Grid, currentLocation: LavaPo
         }
     }
 }
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day17'
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt', 1)
-solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/input.txt', 1)
-    .then(answer => console.log('answer:', answer))
+// solvePartOne(dataFolder + '/data/tests/input.txt', 1)
+solvePartOne(dataFolder + '/data/input.txt', 1)
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/tests/data/input.txt', 2)
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day17/input.txt', 2)
-// .then(answer => console.log('answer:', answer))
+// solvePartOne(dataFolder + '/data/tests/input.txt', 2)
+// solvePartOne(dataFolder + '/data/input.txt', 2)
+
+.then(answer => console.log('answer:', answer))

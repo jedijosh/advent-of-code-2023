@@ -179,15 +179,15 @@ export async function findNextDirection (currentPointValue: String, lastDirectio
     return nextDirectionToTravel
 }
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/tests/data/input.txt')
-// // solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/input.txt')
-//     .then(answer => console.log('answer:', answer))
+const dataFolder = '/mnt/c/Users/joshs/code/advent-of-code-2023-data/day10'
+// solvePartOne(dataFolder + 'data/tests/input.txt')
+// // solvePartOne(dataFolder + '/data/input.txt')
 
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/tests/data/input-part2.txt')
-// solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/tests/data/input2.txt')
-solvePartTwo('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/input.txt')
+// solvePartTwo(dataFolder + '/data/tests/input-part2.txt')
+// solvePartTwo(dataFolder + '/data/tests/input2.txt')
+solvePartTwo(dataFolder + '/data/input.txt')
         .then(answer => console.log('answer:', answer))
 
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/tests/data/input.txt')
-// solvePartOne('/mnt/c/Users/joshs/code/advent-of-code-2023/day10/input.txt')
+// solvePartOne(dataFolder + '/data/tests/input.txt')
+// solvePartOne(dataFolder + '/data/input.txt')
 // .then(answer => console.log('answer:', answer))
